@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2019 Indrit Bashkimi.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/home">
+
+    <fragment
+        android:id="@+id/home"
+        android:name="com.ibashkimi.screenrecorder.home.HomeFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_to_about"
+            app:destination="@id/about" />
+        <action
+            android:id="@+id/action_home_to_settings"
+            app:destination="@id/settings" />
+        <action
+            android:id="@+id/action_home_to_bottomNavigationDialog"
+            app:destination="@id/navigation_dialog" />
+        <action
+            android:id="@+id/action_home_to_moreSettingsDialog"
+            app:destination="@id/more_settings_dialog" />
+    </fragment>
+    <dialog
+        android:id="@+id/navigation_dialog"
+        android:name="com.ibashkimi.screenrecorder.home.BottomNavigationDialog" />
+    <dialog
+        android:id="@+id/more_settings_dialog"
+        android:name="com.ibashkimi.screenrecorder.home.MoreSettingsDialog" />
+    <fragment
+        android:id="@+id/about"
+        android:name="com.ibashkimi.screenrecorder.about.AboutFragment"
+        android:label="@string/about_title"
+        tools:layout="@layout/fragment_about">
+        <action
+            android:id="@+id/action_about_to_privacy_policy"
+            app:destination="@id/privacy_policy" />
+        <action
+            android:id="@+id/action_about_to_licenses"
+            app:destination="@id/licenses" />
+    </fragment>
+    <fragment
+        android:id="@+id/privacy_policy"
+        android:name="com.ibashkimi.screenrecorder.about.PrivacyPolicyFragment"
+        android:label="@string/privacy_policy_title"
+        tools:layout="@layout/fragment_privacy_policy" />
+    <fragment
+        android:id="@+id/settings"
+        android:name="com.ibashkimi.screenrecorder.settings.SettingsFragment"
+        android:label="@string/settings" />
+    <fragment
+        android:id="@+id/licenses"
+        android:name="com.ibashkimi.screenrecorder.about.LicensesFragment"
+        android:label="@string/licences_title" />
+
+</navigation>

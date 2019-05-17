@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2019 Indrit Bashkimi.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="41.55844"
+    android:viewportHeight="41.55844">
+    <group
+        android:translateX="12.779221"
+        android:translateY="12.779221">
+        <path
+            android:fillColor="#fff"
+            android:pathData="M12.004,0H3.996C1.789,0 0,1.789 0,3.996v8.008C0,14.211 1.789,16 3.996,16h8.008C14.211,16 16,14.211 16,12.004V3.996C16,1.789 14.211,0 12.004,0ZM14,11.997C14,12.9941 12.9479,14 11.997,14H4.003C2.9617,14 2,12.9921 2,11.997V4.003C2,2.8733 2.9195,2 4.003,2h7.994C13.1267,2 14,3.0963 14,4.003Z" />
+        <path
+            android:fillColor="#fff"
+            android:pathData="M8,3.5A4.5,4.5 0,0 0,3.5 8,4.5 4.5,0 0,0 8,12.5 4.5,4.5 0,0 0,12.5 8,4.5 4.5,0 0,0 8,3.5M4.7,6.5H5.9A0.6,0.6 0,0 1,6.5 7.1v0.6c0,0.3 -0.228,0.54 -0.516,0.582l0.702,1.218h-0.696l-0.69,-1.2v1.2H4.7m3,-3H8.9V7.1H7.7V7.7H8.9V8.3H7.7V8.9H8.9V9.5H7.7A0.6,0.6 0,0 1,7.1 8.9V7.1A0.6,0.6 0,0 1,7.7 6.5m2.4,0h1.2V7.1h-1.2v1.8h1.2V9.5H10.1A0.6,0.6 0,0 1,9.5 8.9V7.1A0.6,0.6 0,0 1,10.1 6.5M5.3,7.1v0.6h0.6V7.1"
+            android:strokeWidth="0.59999996" />
+    </group>
+</vector>

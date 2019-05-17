@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2019 Indrit Bashkimi.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.preference.PreferenceCategory android:title="@string/pref_category_appearance">
+        <androidx.preference.ListPreference
+            android:defaultValue="system_default"
+            android:entries="@array/dark_theme_human"
+            android:entryValues="@array/dark_theme_values"
+            android:key="@string/pref_key_dark_theme"
+            android:summary="%s"
+            android:title="@string/pref_dark_theme_title" />
+    </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory android:title="@string/prefs_category_save">
+        <androidx.preference.EditTextPreference
+            android:defaultValue="REC"
+            android:key="@string/pref_key_file_prefix"
+            android:summary="%s"
+            android:title="@string/pref_filename_prefix_title" />
+        <androidx.preference.ListPreference
+            android:defaultValue="yyyyMMdd_hhmmss"
+            android:entries="@array/filename"
+            android:entryValues="@array/filename"
+            android:key="@string/pref_key_filename"
+            android:summary="%s"
+            android:title="@string/pref_filename_format_title" />
+    </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory android:title="@string/pref_category_video">
+        <androidx.preference.ListPreference
+            android:key="@string/pref_key_resolution"
+            android:summary="%s"
+            android:title="@string/pref_video_resolution_title" />
+
+        <androidx.preference.ListPreference
+            android:defaultValue="30"
+            android:entries="@array/fps"
+            android:entryValues="@array/fps"
+            android:key="@string/pref_key_fps"
+            android:summary="%s"
+            android:title="@string/pref_video_fps_title" />
+
+        <androidx.preference.ListPreference
+            android:defaultValue="default"
+            android:entries="@array/video_encoder_entries"
+            android:entryValues="@array/video_encoder_values"
+            android:key="@string/pref_key_video_encoder"
+            android:summary="%s"
+            android:title="@string/pref_video_encoder" />
+
+        <androidx.preference.ListPreference
+            android:defaultValue="8388608"
+            android:entries="@array/video_bitrate_entries"
+            android:entryValues="@array/video_bitrate_values"
+            android:key="@string/pref_key_video_bitrate"
+            android:summary="%s"
+            android:title="@string/pref_video_bitrate_title" />
+
+    </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory android:title="@string/pref_category_audio">
+        <androidx.preference.SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key_audio"
+            android:summary="@string/pref_audio_record_summary"
+            android:title="@string/pref_audio_record_title" />
+        <androidx.preference.ListPreference
+            android:defaultValue="44100"
+            android:dependency="@string/pref_key_audio"
+            android:entries="@array/audio_sampling_rate_entries"
+            android:entryValues="@array/audio_sampling_rate_values"
+            android:key="@string/pref_key_audio_sampling_rate"
+            android:summary="%s"
+            android:title="@string/pref_audio_sampling_rate" />
+        <!--<androidx.preference.ListPreference
+            android:defaultValue="default"
+            android:dependency="@string/pref_key_audio"
+            android:entries="@array/audio_encoder_entries"
+            android:entryValues="@array/audio_encoder_values"
+            android:key="@string/pref_key_audio_encoder"
+            android:summary="%s"
+            android:title="@string/pref_audio_encoder" />-->
+        <androidx.preference.ListPreference
+            android:defaultValue="128000"
+            android:dependency="@string/pref_key_audio"
+            android:entries="@array/audio_encoder_bitrate_entries"
+            android:entryValues="@array/audio_encoder_bitrate_values"
+            android:key="@string/pref_key_audio_bit_rate"
+            android:summary="%s"
+            android:title="@string/pref_audio_bitrate" />
+    </androidx.preference.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

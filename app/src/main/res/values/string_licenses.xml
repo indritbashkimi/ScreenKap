@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2019 Indrit Bashkimi.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+
+    <string name="apache_v2" translatable="false">Apache License, Version 2.0</string>
+
+    <string name="android_jetpack_name" translatable="false">Android Jetpack</string>
+    <string name="android_jetpack_website" translatable="false">https://developer.android.com/jetpack</string>
+
+    <string name="material_components_name" translatable="false">Material Components for Android</string>
+    <string name="material_components_website" translatable="false">https://github.com/material-components/material-components-android</string>
+
+    <string name="kotlin_name" translatable="false">Kotlin</string>
+    <string name="kotlin_link" translatable="false">https://github.com/JetBrains/kotlin</string>
+</resources>

@@ -1,0 +1,46 @@
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Gradle generated files
+.gradle/
+.idea/gradle.xml
+build
+app/release
+
+# Signing files
+.signing/
+
+# User-specific configurations
+.idea/assetWizardSettings.xml
+.idea/caches
+.idea/icon.png
+.idea/codeStyles
+.idea/copyright
+.idea/libraries/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/.name
+.idea/compiler.xml
+.idea/copyright/profiles_settings.xml
+.idea/encodings.xml
+.idea/gradle_extensions.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/navEditor.xml
+.idea/scopes/scope_settings.xml
+.idea/runConfigurations.xml
+.idea/vcs.xml
+*.iml
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.directory
+
+# Keystore files
+/screenshots/.directory

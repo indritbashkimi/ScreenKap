@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2019 Indrit Bashkimi.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <string-array name="fps" translatable="false">
+        <item>25</item>
+        <item>30</item>
+        <item>50</item>
+        <item>60</item>
+    </string-array>
+
+    <string-array name="resolution_entries" translatable="false">
+        <item>720P</item>
+        <item>1080P</item>
+        <item>1440P</item>
+        <item>4K</item>
+        <item>8K</item>
+    </string-array>
+
+    <string-array name="resolution_values" translatable="false">
+        <item>720</item>
+        <item>1080</item>
+        <item>1440</item>
+        <item>2160</item>
+        <item>4320</item>
+    </string-array>
+
+    <string-array name="video_bitrate_entries" translatable="false">
+        <item>2 Mbit</item>
+        <item>4 Mbit</item>
+        <item>6 Mbit</item>
+        <item>8 Mbit</item>
+        <item>10 Mbit</item>
+        <item>12 Mbit</item>
+        <item>16 Mbit</item>
+        <item>24 Mbit</item>
+    </string-array>
+
+    <string-array name="video_bitrate_values" translatable="false">
+        <item>2097152</item>
+        <item>4194304</item>
+        <item>6291456</item>
+        <item>8388608</item>
+        <item>10485760</item>
+        <item>12582912</item>
+        <item>16777216</item>
+        <item>25165824</item>
+    </string-array>
+
+    <string-array name="filename" translatable="false">
+        <item>yyyyMMdd_hhmmss</item>
+        <item>ddMMyyyy_hhmmss</item>
+        <item>yyMMdd_hhmmss</item>
+        <item>ddMMyy_hhmmss</item>
+        <item>hhMMss_yyyymmdd</item>
+        <item>hhMMss_ddmmyyyy</item>
+        <item>hhMMss_yymmdd</item>
+        <item>hhMMss_ddmmyy</item>
+    </string-array>
+
+    <string-array name="dark_theme_human">
+        <item>System default</item>
+        <item>Always</item>
+        <item>Never</item>
+    </string-array>
+
+    <string-array name="dark_theme_values">
+        <item>system_default</item>
+        <item>dark</item>
+        <item>light</item>
+    </string-array>
+
+    <string-array name="video_encoder_values">
+        <item>default</item>
+        <item>H264</item>
+        <item>HEVC</item>
+        <!--<item>VP8</item>-->
+    </string-array>
+    <string-array name="video_encoder_entries">
+        <item>Default</item>
+        <item>H264</item>
+        <item>HEVC</item>
+        <!-- <item>VP8</item>-->
+    </string-array>
+
+    <string-array name="audio_sampling_rate_values">
+        <item>44100</item>
+        <item>48000</item>
+    </string-array>
+    <string-array name="audio_sampling_rate_entries">
+        <item>44.1 kHz</item>
+        <item>48 kHz</item>
+    </string-array>
+
+    <string-array name="audio_encoder_bitrate_values">
+        <item>64000</item>
+        <item>96000</item>
+        <item>128000</item>
+        <item>192000</item>
+        <item>256000</item>
+        <item>320000</item>
+    </string-array>
+    <string-array name="audio_encoder_bitrate_entries">
+        <item>64 kbit/s</item>
+        <item>96 kbit/s</item>
+        <item>128 kbit/s</item>
+        <item>192 kbit/s</item>
+        <item>256 kbit/s</item>
+        <item>320 kbit/s</item>
+    </string-array>
+
+</resources>

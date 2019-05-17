@@ -1,0 +1,96 @@
+/*
+ * Copyright (C) 2019 Indrit Bashkimi.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+def versions = [
+        android : [
+                compileSdk: 'android-Q',
+                buildTools: '29.0.0 rc3',
+                minSdk    : 21,
+                targetSdk : 'Q'
+        ],
+        androidx: [
+                appcompat            : '1.1.0-alpha04',
+                browser              : '1.0.0',
+                cardview             : '1.0.0',
+                core                 : '1.1.0-alpha05',
+                fragment             : '1.1.0-alpha07',
+                lifecycle            : '2.1.0-alpha04',
+                navigation           : '2.1.0-alpha03',
+                paging               : '2.1.0',
+                preference           : '1.1.0-alpha04',
+                recyclerview         : '1.1.0-alpha04',
+                recyclerviewSelection: '1.1.0-alpha01',
+        ],
+        google  : [
+                material: '1.1.0-alpha06'
+        ],
+        kotlin  : '1.3.31',
+        test    : [
+                runner  : '1.1.1',
+                espresso: '3.1.1'
+        ]
+]
+
+def libraries = [
+        androidx  : [
+                appcompat            : "androidx.appcompat:appcompat:${versions.androidx.appcompat}",
+                browser              : "androidx.browser:browser:${versions.androidx.browser}",
+                cardview             : "androidx.cardview:cardview:${versions.androidx.cardview}",
+                corektx              : "androidx.core:core-ktx:${versions.androidx.core}",
+                fragment             : "androidx.fragment:fragment:${versions.androidx.fragment}",
+                preference           : "androidx.preference:preference:${versions.androidx.preference}",
+                recyclerview         : "androidx.recyclerview:recyclerview:${versions.androidx.recyclerview}",
+                recyclerviewSelection: "androidx.recyclerview:recyclerview-selection:${versions.androidx.recyclerviewSelection}",
+        ],
+        google    : [
+                material: "com.google.android.material:material:${versions.google.material}"
+        ],
+        kotlin    : [
+                stdlib    : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$versions.kotlin",
+                test      : "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin",
+                plugin    : "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin",
+                coroutines: 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1'
+        ],
+        lifecycle : [
+                compiler  : "androidx.lifecycle:lifecycle-compiler:${versions.androidx.lifecycle}",
+                extensions: "androidx.lifecycle:lifecycle-extensions:${versions.androidx.lifecycle}",
+                livedata  : "androidx.lifecycle:lifecycle-livedata:${versions.androidx.lifecycle}",
+                runtime   : "androidx.lifecycle:lifecycle-runtime:${versions.androidx.lifecycle}",
+                viewmodel : "androidx.lifecycle:lifecycle-viewmodel:${versions.androidx.lifecycle}"
+        ],
+        navigation: [
+                fragment   : "androidx.navigation:navigation-fragment:${versions.androidx.navigation}",
+                fragmentktx: "androidx.navigation:navigation-fragment-ktx:${versions.androidx.navigation}",
+                safeArgs: [
+                        plugin: "androidx.navigation:navigation-safe-args-gradle-plugin:${versions.androidx.navigation}"
+                ],
+                ui         : "androidx.navigation:navigation-ui:${versions.androidx.navigation}",
+                uiktx      : "androidx.navigation:navigation-ui-ktx:${versions.androidx.navigation}"
+        ],
+        test      : [
+                junit   : 'junit:junit:4.12',
+                runner  : "androidx.test:runner:${versions.test.runner}",
+                espresso: [
+                        core: "androidx.test.espresso:espresso-core:${versions.test.espresso}"
+                ]
+        ]
+
+]
+
+ext.versions = versions
+ext.deps = libraries
+
+
