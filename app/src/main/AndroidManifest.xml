@@ -18,6 +18,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.ibashkimi.screenrecorder">
 
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
