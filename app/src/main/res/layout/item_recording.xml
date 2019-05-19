@@ -91,7 +91,7 @@
     <View
         android:id="@+id/foreground"
         android:alpha="0.25"
-        android:background="?colorPrimaryDark"
+        android:background="?colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
