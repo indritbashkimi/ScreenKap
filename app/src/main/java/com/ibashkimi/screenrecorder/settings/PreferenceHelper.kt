@@ -220,6 +220,13 @@ class PreferenceHelper(private val context: Context,
             putString(R.string.pref_key_audio_encoder, value)
         }
 
+    fun initIfFirstTimeAnd(doAlso: () -> Unit = {}) {
+        if (isFirstTime) {
+            initResolutionPreference()
+            doAlso()
+        }
+    }
+
     fun createPreferenceChangedLiveData(vararg keys: String): LiveData<String> {
         return createPreferenceChangedLiveData(sharedPreferences, keys.toList())
     }

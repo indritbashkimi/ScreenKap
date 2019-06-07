@@ -30,25 +30,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        var preferences: PreferenceHelper? = null
         if (savedInstanceState == null) {
-            preferences = PreferenceHelper(this)
-            // Apply theme before onCreate
-            applyNightMode(preferences.nightMode)
-        }
-
-        super.onCreate(savedInstanceState)
-
-        if (savedInstanceState == null) {
-            // The following block needs to be executing after onCreate
-            preferences!!.apply {
-                if (isFirstTime) {
-                    initResolutionPreference()
+            PreferenceHelper(this).apply {
+                // Apply theme before onCreate
+                applyNightMode(nightMode)
+                initIfFirstTimeAnd {
                     createNotificationChannels()
-                    isFirstTime = false
                 }
             }
         }
+
+        super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
 
