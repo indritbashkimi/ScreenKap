@@ -24,7 +24,6 @@ import android.util.DisplayMetrics
 import android.view.Surface
 import android.view.WindowManager
 import androidx.core.content.edit
-import androidx.core.os.BuildCompat.isAtLeastQ
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
@@ -205,7 +204,7 @@ class PreferenceHelper(private val context: Context,
             return when (getString(R.string.pref_key_audio_encoder) ?: "default") {
                 "default" -> MediaRecorder.AudioEncoder.DEFAULT
                 "aac" -> MediaRecorder.AudioEncoder.AAC
-                "opus" -> if (isAtLeastQ()) {
+                "opus" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     MediaRecorder.AudioEncoder.OPUS
                 } else {
                     // Fallback to default value to avoid crash

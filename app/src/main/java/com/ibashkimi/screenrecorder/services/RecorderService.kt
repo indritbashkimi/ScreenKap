@@ -30,7 +30,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.os.BuildCompat.isAtLeastQ
 import com.ibashkimi.screenrecorder.FINISH_NOTIFICATION_CHANNEL_ID
 import com.ibashkimi.screenrecorder.MainActivity
 import com.ibashkimi.screenrecorder.R
@@ -127,7 +126,7 @@ class RecorderService : Service() {
                         val values = ContentValues()
                         values.put(MediaStore.Video.Media.DATE_ADDED, System.currentTimeMillis())
                         values.put(MediaStore.Video.Media.DATE_MODIFIED, System.currentTimeMillis() / 1000)
-                        if (isAtLeastQ()) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             values.put(MediaStore.Video.Media.IS_PENDING, 0)
                         }
                         DataManager(this).update(options.output.uri, values)
@@ -276,7 +275,7 @@ class RecorderService : Service() {
         values.put(MediaStore.Video.Media.DATE_ADDED, System.currentTimeMillis())
         values.put(MediaStore.Video.Media.DATE_MODIFIED, System.currentTimeMillis() / 1000)
         values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4")
-        if (isAtLeastQ()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             values.put(MediaStore.Video.Media.IS_PENDING, 1)
             values.put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/" + getString(R.string.app_name))
         }

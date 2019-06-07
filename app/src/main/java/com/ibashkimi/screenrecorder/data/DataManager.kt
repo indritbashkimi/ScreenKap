@@ -23,9 +23,9 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.ContentObserver
 import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import android.provider.MediaStore
-import androidx.core.os.BuildCompat.isAtLeastQ
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
@@ -77,7 +77,7 @@ class DataManager(private val context: Context) {
                 projection, null, null, null)?.apply {
             if (moveToFirst()) {
                 do {
-                    val isPending: Boolean = if (isAtLeastQ()) {
+                    val isPending: Boolean = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         getInt(getColumnIndexOrThrow(MediaStore.Video.Media.IS_PENDING)) == 1
                     } else {
                         false
