@@ -21,7 +21,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0-beta01'
+        classpath 'com.android.tools.build:gradle:3.5.0-beta03'
         classpath deps.kotlin.plugin
         classpath deps.navigation.safeArgs.plugin
     }

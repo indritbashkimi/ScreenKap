@@ -22,25 +22,24 @@ def versions = [
                 targetSdk : 'Q'
         ],
         androidx: [
-                appcompat            : '1.1.0-alpha04',
-                browser              : '1.0.0',
-                cardview             : '1.0.0',
-                core                 : '1.1.0-alpha05',
-                fragment             : '1.1.0-alpha07',
-                lifecycle            : '2.1.0-alpha04',
-                navigation           : '2.1.0-alpha03',
-                paging               : '2.1.0',
-                preference           : '1.1.0-alpha04',
-                recyclerview         : '1.1.0-alpha04',
-                recyclerviewSelection: '1.1.0-alpha01',
+                appcompat           : '1.1.0-beta01',
+                browser             : '1.0.0',
+                cardview            : '1.0.0',
+                core                : '1.2.0-alpha01',
+                fragment            : '1.1.0-beta01',
+                lifecycle           : '2.2.0-alpha01',
+                navigation          : '2.1.0-alpha05',
+                paging              : '2.1.0',
+                preference          : '1.1.0-beta01',
+                recyclerview        : '1.1.0-alpha06',
         ],
         google  : [
-                material: '1.1.0-alpha06'
+                material: '1.1.0-alpha07'
         ],
         kotlin  : '1.3.31',
         test    : [
                 runner  : '1.1.1',
-                espresso: '3.1.1'
+                espresso: '3.2.0'
         ]
 ]
 
@@ -53,7 +52,7 @@ def libraries = [
                 fragment             : "androidx.fragment:fragment:${versions.androidx.fragment}",
                 preference           : "androidx.preference:preference:${versions.androidx.preference}",
                 recyclerview         : "androidx.recyclerview:recyclerview:${versions.androidx.recyclerview}",
-                recyclerviewSelection: "androidx.recyclerview:recyclerview-selection:${versions.androidx.recyclerviewSelection}",
+                recyclerviewSelection: "androidx.recyclerview:recyclerview-selection:${versions.androidx.recyclerview}",
         ],
         google    : [
                 material: "com.google.android.material:material:${versions.google.material}"
