@@ -16,10 +16,10 @@
 
 def versions = [
         android : [
-                compileSdk: 'android-Q',
-                buildTools: '29.0.0 rc3',
+                compileSdk: 29,
+                buildTools: '29.0.0',
                 minSdk    : 21,
-                targetSdk : 'Q'
+                targetSdk : 29
         ],
         androidx: [
                 appcompat           : '1.1.0-beta01',
@@ -91,5 +91,3 @@ def libraries = [
 
 ext.versions = versions
 ext.deps = libraries
-
-
