@@ -38,6 +38,7 @@
     <string name="menu_share">@string/share</string>
     <string name="menu_delete">Delete</string>
     <string name="dialog_delete_file_msg">Delete this file?</string>
+    <string name="dialog_delete_all_msg">Delete all selected recordings?</string>
     <string name="dialog_title_rename">Insert new name</string>
     <string name="new_file_name_hint">New name</string>
     <string name="recording_thumbnail_description">Thumbnail</string>

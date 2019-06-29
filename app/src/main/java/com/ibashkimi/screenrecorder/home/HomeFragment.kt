@@ -280,7 +280,7 @@ class HomeFragment : RecordingListFragment() {
 
     private fun showDeleteRecordingsDialog(recordings: List<Recording>) {
         AlertDialog.Builder(requireContext())
-                .setTitle("Delete all selected recordings?")
+                .setTitle(R.string.dialog_delete_all_msg)
                 .setPositiveButton(android.R.string.ok) { dialog, _ ->
                     delete(recordings)
                     selectionTracker.clearSelection()
