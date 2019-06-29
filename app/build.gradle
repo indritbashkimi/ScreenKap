@@ -48,10 +48,6 @@ android {
     }
 }
 
-androidExtensions {
-    experimental = true
-}
-
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
@@ -69,7 +65,7 @@ dependencies {
     implementation deps.androidx.recyclerviewSelection
     implementation deps.lifecycle.runtime
     implementation deps.lifecycle.extensions
-    kapt deps.lifecycle.compiler
+    implementation deps.lifecycle.common
     implementation deps.navigation.fragmentktx
     implementation deps.navigation.uiktx
 
