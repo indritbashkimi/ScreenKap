@@ -30,11 +30,14 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.ibashkimi.screenrecorder.FINISH_NOTIFICATION_CHANNEL_ID
 import com.ibashkimi.screenrecorder.MainActivity
 import com.ibashkimi.screenrecorder.R
 import com.ibashkimi.screenrecorder.RECORDING_NOTIFICATION_CHANNEL_ID
 import com.ibashkimi.screenrecorder.data.DataManager
+import com.ibashkimi.screenrecorder.data.MediaStoreDataSource
+import com.ibashkimi.screenrecorder.data.SAFDataSource
 import com.ibashkimi.screenrecorder.settings.PreferenceHelper
 
 
@@ -54,6 +57,19 @@ class RecorderService : Service() {
 
     private lateinit var options: Recorder.Options
 
+    private var dataManager: DataManager? = null
+
+    private fun getDataManager(): DataManager {
+        val saveLocation = PreferenceHelper(this).saveLocation!!
+
+        val d: DataManager = dataManager ?: DataManager((when (saveLocation.type) {
+            PreferenceHelper.UriType.SAF -> SAFDataSource(this, saveLocation.uri)
+            else -> MediaStoreDataSource(this, saveLocation.uri)
+        }))
+        dataManager = d
+        return d
+    }
+
     private val notificationManager: NotificationManager by lazy {
         getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
@@ -70,7 +86,15 @@ class RecorderService : Service() {
                     intent.getParcelableExtra<Intent?>(RECORDER_INTENT_DATA)?.let { intentData ->
                         startForeground(NOTIFICATION_ID_RECORDING, createOnRecordingNotification().build())
                         val result = intent.getIntExtra(RECORDER_INTENT_RESULT, Activity.RESULT_OK)
-                        this.options = loadOptions()
+                        val ops = loadOptions()
+                        if (ops == null) {
+                            Toast.makeText(this, R.string.recording_error_message, Toast.LENGTH_SHORT).show()
+                            //delete(options.output.uri)
+                            state = RecorderState.State.STOPPED
+                            this.recorder = null
+                            return START_NOT_STICKY
+                        }
+                        this.options = ops
                         this.recorder = Recorder(this)
                         return if (this.recorder!!.start(result, intentData, options)) {
                             startTime = System.currentTimeMillis()
@@ -78,7 +102,7 @@ class RecorderService : Service() {
                             START_STICKY
                         } else {
                             Toast.makeText(this, R.string.recording_error_message, Toast.LENGTH_SHORT).show()
-                            delete(options.output.uri)
+                            //delete(options.output.uri)
                             state = RecorderState.State.STOPPED
                             this.recorder = null
                             START_NOT_STICKY
@@ -123,16 +147,23 @@ class RecorderService : Service() {
                 if (state == RecorderState.State.RECORDING || state == RecorderState.State.PAUSED) {
                     if (recorder!!.stop()) {
                         Log.d(TAG, "Recording finished.")
+
                         val values = ContentValues()
                         values.put(MediaStore.Video.Media.DATE_ADDED, System.currentTimeMillis())
                         values.put(MediaStore.Video.Media.DATE_MODIFIED, System.currentTimeMillis() / 1000)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             values.put(MediaStore.Video.Media.IS_PENDING, 0)
                         }
-                        DataManager(this).update(options.output.uri, values)
+
+                        getDataManager().update(options.output.uri, values)
+                        dataManager = null
+
+                        LocalBroadcastManager.getInstance(this)
+                                .sendBroadcast(Intent(ACTION_RECORDING_COMPLETED))
+
                         showFinishNotification()
                     } else {
-                        delete(options.output.uri)
+                        //delete(options.output.uri)
                         Toast.makeText(this, getString(R.string.recording_error_message), Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -145,6 +176,8 @@ class RecorderService : Service() {
             ACTION_RECORDING_DELETE -> {
                 intent.getParcelableExtra<Uri>(EXTRA_URI_TO_DELETE)?.let { delete(it) }
                 notificationManager.cancel(NOTIFICATION_ID_FINISH)
+                LocalBroadcastManager.getInstance(this)
+                        .sendBroadcast(Intent(ACTION_RECORDING_DELETED))
                 return if (state == RecorderState.State.STOPPED) START_NOT_STICKY else START_STICKY
             }
             else -> return START_NOT_STICKY
@@ -152,7 +185,7 @@ class RecorderService : Service() {
     }
 
     private fun delete(uri: Uri) {
-        DataManager(this).delete(uri)
+        getDataManager().delete(uri)
     }
 
     private val pauseAction: NotificationCompat.Action
@@ -232,7 +265,7 @@ class RecorderService : Service() {
                 .setAction(Intent.ACTION_SEND)
                 .setType("video/*")
                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                .putExtra(Intent.EXTRA_STREAM, options.output.uri)
+        //.putExtra(Intent.EXTRA_STREAM, options.output.uri)
 
         val sharePendingIntent = PendingIntent.getActivity(this, 0,
                 Intent.createChooser(shareIntent, getString(R.string.share)),
@@ -240,7 +273,7 @@ class RecorderService : Service() {
 
         val deleteIntent = Intent(this, RecorderService::class.java)
                 .setAction(ACTION_RECORDING_DELETE)
-                .putExtra(EXTRA_URI_TO_DELETE, options.output.uri)
+        //.putExtra(EXTRA_URI_TO_DELETE, options.output.uri)
 
         val deletePendingIntent = PendingIntent.getService(this, 0,
                 deleteIntent,
@@ -264,24 +297,15 @@ class RecorderService : Service() {
         notificationManager.notify(id, notification)
     }
 
-    private fun loadOptions(): Recorder.Options {
-        val prefs = PreferenceHelper(this)
-        val fileTitle = prefs.filename
-        val values = ContentValues()
-        //values.put(MediaStore.Video.Media.TITLE, fileTitle)
-        values.put(MediaStore.Video.Media.DISPLAY_NAME, fileTitle)
-        // DATE_TAKEN is in milliseconds
-        // DATE_MODIFIED is in seconds
-        values.put(MediaStore.Video.Media.DATE_ADDED, System.currentTimeMillis())
-        values.put(MediaStore.Video.Media.DATE_MODIFIED, System.currentTimeMillis() / 1000)
-        values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            values.put(MediaStore.Video.Media.IS_PENDING, 1)
-            values.put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/" + getString(R.string.app_name))
-        }
+    private fun loadOptions(): Recorder.Options? {
+        val preferences = PreferenceHelper(this)
 
-        val uri = contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values)!!
-        return prefs.run {
+        val folderUri = preferences.saveLocation?.uri ?: return null
+
+        val uri = getDataManager()
+                .create(folderUri, preferences.filename, "video/mp4", null) ?: return null
+
+        return preferences.run {
             Recorder.Options(
                     video = Recorder.VideoOptions(
                             resolution = resolution.run {
@@ -314,8 +338,11 @@ class RecorderService : Service() {
         const val ACTION_RECORDING_PAUSE = "com.ibashkimi.screenrecorder.action.RECORDING_PAUSE"
         const val ACTION_RECORDING_RESUME = "com.ibashkimi.screenrecorder.action.RECORDING_RESUME"
 
-        const val ACTION_RECORDING_DELETE = "con.ibashkimi.screenrecorder,action.RECORDING_DELETE"
+        const val ACTION_RECORDING_DELETE = "con.ibashkimi.screenrecorder.action.RECORDING_DELETE"
         const val EXTRA_URI_TO_DELETE = "arg_delete_uri"
+
+        const val ACTION_RECORDING_COMPLETED = "com.ibashkimi.screenrecorder.action.RECORDING_COMPLETED"
+        const val ACTION_RECORDING_DELETED = "com.ibashkimi.screenrecorder.action.RECORDING_DELETED"
 
         const val RECORDER_INTENT_DATA = "recorder_intent_data"
         const val RECORDER_INTENT_RESULT = "recorder_intent_result"
@@ -328,6 +355,7 @@ class RecorderService : Service() {
                 action = ACTION_RECORDING_START
                 putExtra(RECORDER_INTENT_DATA, data)
                 putExtra(RECORDER_INTENT_RESULT, resultCode)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION and Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 context.startService(this)
             }
         }

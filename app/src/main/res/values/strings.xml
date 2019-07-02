@@ -42,6 +42,8 @@
     <string name="dialog_title_rename">Insert new name</string>
     <string name="new_file_name_hint">New name</string>
     <string name="recording_thumbnail_description">Thumbnail</string>
+    <string name="choose_location_dialog_title">Choose where to save recordings</string>
+    <string name="choose_location_action">Select Directory</string>
 
     <!-- Service -->
     <string name="notification_title">Screen recording</string>
@@ -72,6 +74,11 @@
     <string name="pref_key_orientation" translatable="false">orientation</string>
     <string name="pref_category_appearance">Appearance</string>
     <string name="pref_dark_theme_title">Dark theme</string>
+    <string name="pref_key_save_location">save_location</string>
+    <string name="pref_key_save_location_type">save_location_type</string>
+    <string name="pref_save_location_title">Folder</string>
+    <string name="reset_save_location">Reset</string>
+    <string name="change_save_location">Change</string>
 
     <string name="pref_category_video">Video</string>
     <string name="pref_video_resolution_title">Resolution</string>
@@ -85,7 +92,7 @@
     <string name="pref_audio_sampling_rate">Sampling rate</string>
     <string name="pref_audio_bitrate">Bitrate</string>
 
-    <string name="prefs_category_save">Filename</string>
+    <string name="prefs_category_output">Output</string>
     <string name="pref_filename_format_title">Format</string>
     <string name="pref_filename_prefix_title">Prefix</string>
 

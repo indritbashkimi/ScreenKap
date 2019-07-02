@@ -26,8 +26,6 @@ import android.media.projection.MediaProjectionManager
 import android.net.Uri
 import android.os.Build
 import android.util.Log
-import android.widget.Toast
-import com.ibashkimi.screenrecorder.R
 import java.io.IOException
 
 
@@ -41,7 +39,7 @@ class Recorder(private val context: Context) {
 
     fun start(result: Int, data: Intent, options: Options): Boolean {
         if (isRecording) {
-            throw IllegalStateException("Called start but Recorder is already recording.")
+            throw IllegalStateException("start called but Recorder is already recording.")
         }
         mediaRecorder = MediaRecorder()
         if (!mediaRecorder!!.init(options)) {
@@ -66,7 +64,6 @@ class Recorder(private val context: Context) {
             isRecording = true
             true
         } catch (e: IllegalStateException) {
-            Log.e("Recorder", "Media recorder reached Illegal state exception. Did you start the recording twice?")
             isRecording = false
             mediaProjection!!.stop()
             false
@@ -94,7 +91,7 @@ class Recorder(private val context: Context) {
 
     private fun MediaRecorder.init(options: Options): Boolean {
         val fileDescriptor = context.contentResolver
-                .openFileDescriptor(options.output.uri, "w")!!.fileDescriptor
+                .openFileDescriptor(options.output.uri, "w")?.fileDescriptor ?: return false
 
         try {
             setVideoSource(MediaRecorder.VideoSource.SURFACE)

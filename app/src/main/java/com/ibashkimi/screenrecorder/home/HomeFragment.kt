@@ -25,6 +25,7 @@ import android.content.pm.PackageManager
 import android.media.projection.MediaProjectionManager
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
@@ -60,8 +61,34 @@ class HomeFragment : RecordingListFragment() {
 
     private lateinit var recorderState: LiveData<RecorderState.State>
 
+    private lateinit var preferences: PreferenceHelper
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        preferences = PreferenceHelper(requireContext()).apply {
+            // preferenceHelper.doPostInitCheck()
+            // preferenceHelper.checkOutputDirectory()
+            // preferenceHelper.checkRecordAudio()
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
+                    != PackageManager.PERMISSION_GRANTED) {
+                if (recordAudio) {
+                    recordAudio = false
+                }
+            }
+            saveLocation?.let { uri ->
+                if (uri.type == PreferenceHelper.UriType.SAF) {
+                    requireContext().contentResolver.takePersistableUriPermission(uri.uri,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                    requireContext().contentResolver.persistedUriPermissions.filter { it.uri == uri.uri }.apply {
+                        if (isEmpty()) {
+                            resetSaveLocation()
+                        }
+                    }
+                }
+            }
+        }
 
         recorderState = viewModel.recorderState
 
@@ -85,21 +112,18 @@ class HomeFragment : RecordingListFragment() {
                 when {
                     selectionTracker.hasSelection() -> selectionTracker.clearSelection()
                     isRecording -> stopRecording()
-                    else -> startRecording()
+                    else -> {
+                        if (preferences.saveLocation == null) {
+                            showChooseTreeUri()
+                        } else {
+                            startRecording()
+                        }
+                    }
                 }
             }
             setOnLongClickListener {
                 Toast.makeText(requireContext(), R.string.home_fab_record_hint, Toast.LENGTH_SHORT).show()
                 true
-            }
-        }
-
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
-                != PackageManager.PERMISSION_GRANTED) {
-            PreferenceHelper(requireContext()).apply {
-                if (recordAudio) {
-                    recordAudio = false
-                }
             }
         }
 
@@ -234,13 +258,52 @@ class HomeFragment : RecordingListFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK && requestCode == SCREEN_RECORD_REQUEST_CODE) {
-            RecorderService.start(requireContext(), resultCode, data)
-        }
+        when (requestCode) {
+            SCREEN_RECORD_REQUEST_CODE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    RecorderService.start(requireContext(), resultCode, data)
+                }
 
-        requireActivity().intent.action?.takeIf { it == ACTION_TOGGLE_RECORDING }?.let {
-            requireActivity().finish()
+                requireActivity().intent.action?.takeIf { it == ACTION_TOGGLE_RECORDING }?.let {
+                    requireActivity().finish()
+                }
+            }
+            REQUEST_DOCUMENT_TREE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    onTreeUriResult(resultCode, data)
+                }
+                if (preferences.saveLocation != null) {
+                    startRecording()
+                }
+            }
         }
+    }
+
+    private fun onTreeUriResult(resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            val uri: Uri = data!!.data!!
+            requireContext().contentResolver.apply {
+                takePersistableUriPermission(uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                persistedUriPermissions.filter { it.uri == uri }.apply {
+                    if (isNotEmpty()) {
+                        PreferenceHelper(requireContext()).setSaveLocation(uri, PreferenceHelper.UriType.SAF)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showChooseTreeUri() {
+        AlertDialog.Builder(requireContext())
+                .setTitle(R.string.choose_location_dialog_title)
+                .setPositiveButton(R.string.choose_location_action) { _, _ ->
+                    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                    intent.putExtra("android.provider.extra.INITIAL_URI", MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
+                    startActivityForResult(intent, REQUEST_DOCUMENT_TREE)
+                }
+                .create().show()
     }
 
     private fun showRenameRecordingDialog(context: Context, recording: Recording) {
@@ -321,5 +384,6 @@ class HomeFragment : RecordingListFragment() {
 
     companion object {
         const val SCREEN_RECORD_REQUEST_CODE = 1003
+        const val REQUEST_DOCUMENT_TREE = 22
     }
 }

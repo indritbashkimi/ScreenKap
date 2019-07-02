@@ -26,12 +26,19 @@
             android:title="@string/pref_dark_theme_title" />
     </androidx.preference.PreferenceCategory>
 
-    <androidx.preference.PreferenceCategory android:title="@string/prefs_category_save">
+    <androidx.preference.PreferenceCategory android:title="@string/prefs_category_output">
+
+        <androidx.preference.Preference
+            android:defaultValue="false"
+            android:key="@string/pref_key_save_location"
+            android:title="@string/pref_save_location_title" />
+
         <androidx.preference.EditTextPreference
             android:defaultValue="REC"
             android:key="@string/pref_key_file_prefix"
             android:summary="%s"
             android:title="@string/pref_filename_prefix_title" />
+
         <androidx.preference.ListPreference
             android:defaultValue="yyyyMMdd_hhmmss"
             android:entries="@array/filename"
@@ -39,6 +46,7 @@
             android:key="@string/pref_key_filename"
             android:summary="%s"
             android:title="@string/pref_filename_format_title" />
+
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory android:title="@string/pref_category_video">

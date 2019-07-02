@@ -82,7 +82,7 @@ class RecordingViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         title.text = recording.title
         duration.text = toTime(recording.duration.toLong())
-        modified.text = DateUtils.getRelativeTimeSpanString(recording.modified * 1000)
+        modified.text = DateUtils.getRelativeTimeSpanString(recording.modified)
         size.text = getFileSize(recording.size)
     }
 

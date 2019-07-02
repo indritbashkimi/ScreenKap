@@ -16,14 +16,27 @@
 
 package com.ibashkimi.screenrecorder.data
 
+import android.content.ContentValues
 import android.net.Uri
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
 
-@Parcelize
-data class Recording(val uri: Uri,
-                     val title: String,
-                     val duration: Int, // seconds
-                     val size: Long, // bytes
-                     val modified: Long, // millis
-                     val isPending: Boolean = false) : Parcelable
+
+interface DataSource {
+
+    fun create(folderUri: Uri, name: String, mimeType: String, extra: ContentValues?): Uri?
+
+    fun delete(uri: Uri)
+
+    fun delete(uris: List<Uri>)
+
+    fun fetchRecordings(): List<Recording>
+
+    fun rename(uri: Uri, newName: String)
+
+    fun update(uri: Uri, values: ContentValues)
+
+    fun registerContentChangedObserver(observer: ContentChangeObserver)
+
+    fun unregisterContentChangeObserver(observer: ContentChangeObserver)
+}
+
+class ContentChangeObserver(val contentChanged: () -> Unit)

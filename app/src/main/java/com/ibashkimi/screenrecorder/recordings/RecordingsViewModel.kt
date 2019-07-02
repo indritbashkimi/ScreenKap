@@ -18,15 +18,8 @@ package com.ibashkimi.screenrecorder.recordings
 
 import android.app.Application
 import android.content.Context
-import android.database.ContentObserver
-import android.net.Uri
-import android.os.Handler
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import com.ibashkimi.screenrecorder.data.DataManager
-import com.ibashkimi.screenrecorder.data.Recording
+import androidx.lifecycle.*
+import com.ibashkimi.screenrecorder.data.*
 import com.ibashkimi.screenrecorder.services.RecorderState
 import com.ibashkimi.screenrecorder.settings.PreferenceHelper
 import kotlinx.coroutines.Dispatchers
@@ -37,11 +30,13 @@ class RecordingsViewModel(app: Application) : AndroidViewModel(app) {
 
     private val context: Context = getApplication()
 
-    private val dataManager = DataManager(getApplication())
+    private var dataManager: DataManager? = null
 
     private val preferences = PreferenceHelper(context)
 
-    private val uriObserver = MyContentObserver()
+    private val uriObserver = ContentChangeObserver {
+        refresh()
+    }
 
     val recordings: MutableLiveData<List<Recording>>
 
@@ -52,38 +47,57 @@ class RecordingsViewModel(app: Application) : AndroidViewModel(app) {
                 PreferenceHelper.KEY_ORDER_BY,
                 PreferenceHelper.KEY_SORT_BY
         )
+        val saveLocation = Transformations.distinctUntilChanged(preferences.saveLocationLiveData)
         recordings = MediatorLiveData<List<Recording>>().apply {
             addSource(sortOptions) {
                 this.value?.let { data ->
                     postValue(processData(data))
                 }
             }
+            addSource(saveLocation) {
+                preferences.saveLocation?.let {
+                    setNewDataManager(it)
+                    refresh()
+                }
+            }
         }
-        refresh()
-        dataManager.registerUriChangeObserver(uriObserver)
     }
 
     override fun onCleared() {
         super.onCleared()
-        dataManager.unregisterUriChangeObserver(uriObserver)
+        dataManager?.unregisterUriChangeObserver(uriObserver)
+    }
+
+    private fun setNewDataManager(saveUri: PreferenceHelper.SaveUri) {
+        android.util.Log.d("RecordingsViewModel", "setNewDataManager called")
+        dataManager?.unregisterUriChangeObserver(uriObserver)
+        val source = when (saveUri.type) {
+            PreferenceHelper.UriType.MEDIA_STORE -> MediaStoreDataSource(context, saveUri.uri)
+            PreferenceHelper.UriType.SAF -> SAFDataSource(context, saveUri.uri)
+        }
+        dataManager = DataManager(source).apply {
+            registerUriChangeObserver(uriObserver)
+        }
     }
 
     fun refresh() {
-        viewModelScope.launch(Dispatchers.IO) {
-            recordings.postValue(processData(dataManager.fetchRecordings()))
+        dataManager?.let {
+            viewModelScope.launch(Dispatchers.IO) {
+                recordings.postValue(processData(it.fetchRecordings()))
+            }
         }
     }
 
     fun rename(recording: Recording, newName: String) {
-        dataManager.rename(recording, newName)
+        dataManager?.rename(recording, newName)
     }
 
     fun deleteRecording(recording: Recording) {
-        dataManager.delete(recording)
+        dataManager?.delete(recording)
     }
 
     fun deleteRecordings(recordings: List<Recording>) {
-        dataManager.delete(recordings.map { it.uri })
+        dataManager?.delete(recordings.map { it.uri })
     }
 
     private fun processData(recordings: List<Recording>): List<Recording> {
@@ -100,17 +114,5 @@ class RecordingsViewModel(app: Application) : AndroidViewModel(app) {
                 }
             }
         }
-    }
-
-    inner class MyContentObserver(handler: Handler = Handler()) : ContentObserver(handler) {
-        override fun onChange(selfChange: Boolean) {
-            onChange(selfChange, null)
-        }
-
-        override fun onChange(selfChange: Boolean, uri: Uri?) {
-            refresh()
-        }
-
-        override fun deliverSelfNotifications() = true
     }
 }

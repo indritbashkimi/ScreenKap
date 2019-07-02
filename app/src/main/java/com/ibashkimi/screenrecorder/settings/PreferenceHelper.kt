@@ -19,7 +19,9 @@ package com.ibashkimi.screenrecorder.settings
 import android.content.Context
 import android.content.SharedPreferences
 import android.media.MediaRecorder
+import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.view.Surface
 import android.view.WindowManager
@@ -97,7 +99,7 @@ class PreferenceHelper(private val context: Context,
             putString(R.string.pref_key_resolution, value)
         }
 
-    fun initResolutionPreference() {
+    private fun initResolutionPreference() {
         val realDisplayMetrics = DisplayMetrics()
         val window = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         window.defaultDisplay.getRealMetrics(realDisplayMetrics)
@@ -154,6 +156,41 @@ class PreferenceHelper(private val context: Context,
             }
             return prefix + formatter.format(Calendar.getInstance().time)
         }
+
+    val saveLocation: SaveUri?
+        get() {
+            getString(R.string.pref_key_save_location)?.let { Uri.parse(it) }?.let { uri ->
+                getString(R.string.pref_key_save_location_type)?.let { type ->
+                    val uriType = when (type) {
+                        "media_store" -> UriType.MEDIA_STORE
+                        "saf" -> UriType.SAF
+                        else -> throw IllegalArgumentException("Unknown uri type $type.")
+                    }
+                    return SaveUri(uri, uriType)
+                }
+            } ?: return null
+        }
+
+    val saveLocationLiveData: LiveData<SaveUri?> by lazy {
+        PreferenceLiveData(sharedPreferences, context.getString(R.string.pref_key_save_location), true) {
+            saveLocation
+        }
+    }
+
+    fun setSaveLocation(uri: Uri?, uriType: UriType?) {
+        sharedPreferences.edit()
+                .putString(context.getString(R.string.pref_key_save_location), uri.toString())
+                .putString(context.getString(R.string.pref_key_save_location_type), uriType?.name?.toLowerCase(Locale.ENGLISH))
+                .apply()
+    }
+
+    fun resetSaveLocation() {
+        if (Build.VERSION.SDK_INT < 29) {
+            setSaveLocation(null, null)
+        } else {
+            setSaveLocation(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, UriType.MEDIA_STORE)
+        }
+    }
 
     var nightMode: String
         get() = getString(R.string.pref_key_dark_theme) ?: "system_default"
@@ -222,7 +259,9 @@ class PreferenceHelper(private val context: Context,
     fun initIfFirstTimeAnd(doAlso: () -> Unit = {}) {
         if (isFirstTime) {
             initResolutionPreference()
+            resetSaveLocation()
             doAlso()
+            isFirstTime = false
         }
     }
 
@@ -248,7 +287,7 @@ class PreferenceHelper(private val context: Context,
         putString(stringRes, value.toString())
     }
 
-    private fun putString(stringRes: Int, value: String) {
+    private fun putString(stringRes: Int, value: String?) {
         sharedPreferences.edit().putString(context.getString(stringRes), value).apply()
     }
 
@@ -262,6 +301,12 @@ class PreferenceHelper(private val context: Context,
 
     enum class OrderBy {
         ASCENDING, DESCENDING
+    }
+
+    data class SaveUri(val uri: Uri, val type: UriType)
+
+    enum class UriType {
+        MEDIA_STORE, SAF
     }
 
     companion object {
