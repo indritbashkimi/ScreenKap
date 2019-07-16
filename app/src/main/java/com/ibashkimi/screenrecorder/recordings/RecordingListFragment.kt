@@ -64,7 +64,7 @@ abstract class RecordingListFragment : Fragment(), SwipeRefreshLayout.OnRefreshL
         recyclerView.adapter = recordingsAdapter
         val divider = DividerItemDecoration(requireContext(), layoutManager.orientation)
         recyclerView.addItemDecoration(divider)
-        selectionTracker = SelectionTracker.Builder<Recording>(
+        selectionTracker = SelectionTracker.Builder(
                 "recording-selection-id",
                 recyclerView,
                 RecordingKeyProvider(recordingsAdapter),
@@ -79,7 +79,7 @@ abstract class RecordingListFragment : Fragment(), SwipeRefreshLayout.OnRefreshL
         recordingsAdapter.selectionTracker = selectionTracker
 
         viewModel = ViewModelProviders.of(this).get(RecordingsViewModel::class.java)
-        viewModel.recordings.observe(this, Observer {
+        viewModel.recordings.observe(viewLifecycleOwner, Observer {
             onDataLoaded(it)
         })
 

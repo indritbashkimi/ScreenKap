@@ -262,19 +262,13 @@ class RecorderService : Service() {
         val contentIntent = PendingIntent.getActivity(this, 0,
                 Intent(this, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val shareIntent = Intent()
-                .setAction(Intent.ACTION_SEND)
-                .setType("video/*")
-                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        //.putExtra(Intent.EXTRA_STREAM, options.output.uri)
-
         val sharePendingIntent = PendingIntent.getActivity(this, 0,
-                Intent.createChooser(shareIntent, getString(R.string.share)),
+                Intent.createChooser(createShareIntent(options.output.uri), getString(R.string.share)),
                 PendingIntent.FLAG_UPDATE_CURRENT)
 
         val deleteIntent = Intent(this, RecorderService::class.java)
                 .setAction(ACTION_RECORDING_DELETE)
-        //.putExtra(EXTRA_URI_TO_DELETE, options.output.uri)
+                .putExtra(EXTRA_URI_TO_DELETE, options.output.uri)
 
         val deletePendingIntent = PendingIntent.getService(this, 0,
                 deleteIntent,
@@ -292,6 +286,12 @@ class RecorderService : Service() {
                 .addAction(deleteAction)
         updateNotification(notification.build(), NOTIFICATION_ID_FINISH)
     }
+
+    private fun createShareIntent(uri: Uri) = Intent()
+            .setAction(Intent.ACTION_SEND)
+            .setType("video/*")
+            .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            .putExtra(Intent.EXTRA_STREAM, uri)
 
     //Update existing notification with its id and new Notification data
     private fun updateNotification(notification: Notification, id: Int) {

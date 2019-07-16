@@ -355,14 +355,15 @@ class HomeFragment : RecordingListFragment() {
     }
 
     private fun showShareRecordingDialog(recording: Recording) {
-        val intent = Intent()
-                .setAction(Intent.ACTION_SEND)
-                .setType("video/*")
-                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                .putExtra(Intent.EXTRA_STREAM, recording.uri)
-        startActivity(Intent.createChooser(intent,
-                getString(R.string.notification_finish_title)))
+        startActivity(Intent.createChooser(createShareIntent(recording.uri),
+                getString(R.string.notification_finish_title))) // todo
     }
+
+    private fun createShareIntent(uri: Uri) = Intent()
+            .setAction(Intent.ACTION_SEND)
+            .setType("video/*")
+            .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            .putExtra(Intent.EXTRA_STREAM, uri)
 
     private fun shareVideos(recordings: List<Recording>) {
         val videoList = ArrayList<Uri>()
