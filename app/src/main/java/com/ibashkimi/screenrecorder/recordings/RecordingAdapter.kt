@@ -89,6 +89,7 @@ class RecordingViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     fun getItemDetails(): ItemDetailsLookup.ItemDetails<Recording> = RecordingDetails(pos, recording!!)
 
     private fun loadThumbnail(imageView: ImageView, uri: Uri) {
+        imageView.clipToOutline = true
         Glide.with(imageView)
                 .asBitmap()
                 .apply(RequestOptions().frame(-1))
