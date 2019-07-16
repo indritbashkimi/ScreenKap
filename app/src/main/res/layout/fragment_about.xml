@@ -39,7 +39,7 @@
             android:id="@+id/version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?textAppearanceSubtitle1"
+            android:textAppearance="?textAppearanceCaption"
             tools:text="Version 0.1" />
 
         <TextView

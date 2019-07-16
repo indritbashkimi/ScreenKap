@@ -112,7 +112,8 @@
     <string name="licences_title">Licenses</string>
     <string name="about_lib_intro">This app uses the following open source libraries.</string>
     <string name="about_privacy_policy">Privacy Policy</string>
-    <string name="app_description">This app is open source and is licensed under Apache 2.0.</string>
+    <!--<string name="app_description">This app is open source and is licensed under Apache 2.0.</string>-->
+    <string name="app_description">This app is a simple screen recorder</string>
     <string name="source_code"><u>Source code</u></string>
     <string name="app_source_code" translatable="false">https://github.com/indritbashkimi/ScreenKap</string>
     <string name="open_privacy_policy_website">Open website</string>
