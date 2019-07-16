@@ -40,8 +40,8 @@ fun Context.createNotificationChannels() {
     )
     recordingChannel.enableLights(true)
     recordingChannel.lightColor = Color.RED
-    recordingChannel.setShowBadge(true)
-    //recordingNotificationChannel.enableVibration(true)
+    recordingChannel.setShowBadge(false)
+    recordingChannel.enableVibration(false)
     recordingChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
     notificationChannels.add(recordingChannel)
 
@@ -50,8 +50,9 @@ fun Context.createNotificationChannels() {
             getString(R.string.notification_channel_finish),
             NotificationManager.IMPORTANCE_DEFAULT
     )
+    //finishChannel.enableLights(true)
     finishChannel.setShowBadge(true)
-    //finishNotificationChannel.enableVibration(true)
+    finishChannel.enableVibration(false)
     finishChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
     notificationChannels.add(finishChannel)
 
