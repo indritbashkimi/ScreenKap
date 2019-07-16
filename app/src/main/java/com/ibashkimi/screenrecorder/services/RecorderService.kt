@@ -31,10 +31,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.ibashkimi.screenrecorder.FINISH_NOTIFICATION_CHANNEL_ID
-import com.ibashkimi.screenrecorder.MainActivity
-import com.ibashkimi.screenrecorder.R
-import com.ibashkimi.screenrecorder.RECORDING_NOTIFICATION_CHANNEL_ID
+import com.ibashkimi.screenrecorder.*
 import com.ibashkimi.screenrecorder.data.DataManager
 import com.ibashkimi.screenrecorder.data.MediaStoreDataSource
 import com.ibashkimi.screenrecorder.data.SAFDataSource
@@ -186,6 +183,7 @@ class RecorderService : Service() {
     }
 
     private fun delete(uri: Uri) {
+        // todo a new data manager is created because it's destroyed in on stop
         getDataManager().delete(uri)
     }
 

@@ -32,8 +32,7 @@
         app:fabAlignmentMode="center"
         app:fabCradleRoundedCornerRadius="16dp"
         app:hideOnScroll="true"
-        app:navigationIcon="@drawable/ic_menu"
-        app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
+        app:navigationIcon="@drawable/ic_menu" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
