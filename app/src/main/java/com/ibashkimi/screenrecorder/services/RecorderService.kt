@@ -148,9 +148,10 @@ class RecorderService : Service() {
                     if (recorder!!.stop()) {
                         Log.d(TAG, "Recording finished.")
 
+                        val now = System.currentTimeMillis()
                         val values = ContentValues()
-                        values.put(MediaStore.Video.Media.DATE_ADDED, System.currentTimeMillis())
-                        values.put(MediaStore.Video.Media.DATE_MODIFIED, System.currentTimeMillis() / 1000)
+                        values.put(MediaStore.Video.Media.DATE_ADDED, now)
+                        values.put(MediaStore.Video.Media.DATE_MODIFIED, now / 1000)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             values.put(MediaStore.Video.Media.IS_PENDING, 0)
                         }

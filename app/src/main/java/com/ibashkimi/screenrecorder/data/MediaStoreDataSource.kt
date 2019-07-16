@@ -36,10 +36,11 @@ class MediaStoreDataSource(val context: Context, val uri: Uri) : DataSource {
         val values = ContentValues()
         //values.put(MediaStore.Video.Media.TITLE, fileTitle)
         values.put(MediaStore.Video.Media.DISPLAY_NAME, name)
+        val now = System.currentTimeMillis()
         // DATE_ADDED is in milliseconds
         // DATE_MODIFIED is in seconds
-        values.put(MediaStore.Video.Media.DATE_ADDED, System.currentTimeMillis())
-        values.put(MediaStore.Video.Media.DATE_MODIFIED, System.currentTimeMillis() / 1000)
+        values.put(MediaStore.Video.Media.DATE_ADDED, now)
+        values.put(MediaStore.Video.Media.DATE_MODIFIED, now / 1000)
         values.put(MediaStore.Video.Media.MIME_TYPE, mimeType)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             values.put(MediaStore.Video.Media.IS_PENDING, 1)
