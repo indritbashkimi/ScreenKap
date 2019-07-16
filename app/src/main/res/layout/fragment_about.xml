@@ -49,7 +49,7 @@
             android:gravity="center"
             android:padding="16dp"
             android:text="@string/app_description"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:textAppearance="?textAppearanceSubtitle1"
             android:visibility="visible" />
 
         <TextView
@@ -59,8 +59,8 @@
             android:gravity="center"
             android:paddingBottom="16dp"
             android:text="@string/source_code"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:visibility="visible" />
+            android:textAppearance="?textAppearanceSubtitle1"
+            android:visibility="gone" />
 
         <TextView
             android:layout_width="match_parent"
