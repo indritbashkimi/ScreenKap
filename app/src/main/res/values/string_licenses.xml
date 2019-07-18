@@ -25,5 +25,9 @@
     <string name="material_components_website" translatable="false">https://github.com/material-components/material-components-android</string>
 
     <string name="kotlin_name" translatable="false">Kotlin</string>
-    <string name="kotlin_link" translatable="false">https://github.com/JetBrains/kotlin</string>
+    <string name="kotlin_website" translatable="false">https://github.com/JetBrains/kotlin</string>
+
+    <string name="glide_name">Glide</string>
+    <string name="glide_license">BSD, part MIT and Apache 2.0</string>
+    <string name="glide_website">https://github.com/bumptech/glide</string>
 </resources>

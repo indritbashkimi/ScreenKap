@@ -40,8 +40,11 @@ class LicensesFragment : Fragment() {
                     R.string.android_jetpack_website,
                     R.string.apache_v2),
             Library(R.string.kotlin_name,
-                    R.string.kotlin_link,
+                    R.string.kotlin_website,
                     R.string.apache_v2),
+            Library(R.string.glide_name,
+                    R.string.glide_website,
+                    R.string.glide_license),
             Library(R.string.material_components_name,
                     R.string.material_components_website,
                     R.string.apache_v2))
