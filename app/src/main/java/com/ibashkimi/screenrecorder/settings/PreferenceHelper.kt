@@ -105,7 +105,7 @@ class PreferenceHelper(private val context: Context,
         window.defaultDisplay.getRealMetrics(realDisplayMetrics)
         val resolutionValues = context.resources.getStringArray(R.array.resolution_values)
                 .filter { it.toInt() <= realDisplayMetrics.widthPixels }
-        videoWidth = resolutionValues.last().toInt()
+        videoWidth = resolutionValues.lastOrNull()?.toInt() ?: displayMetrics.widthPixels
     }
 
     val resolution: Pair<Int, Int>
@@ -361,7 +361,7 @@ fun createPreferenceChangedLiveData(sharedPreferences: SharedPreferences, keys: 
 }
 
 fun <T> createPreferenceLiveData(sharedPreferences: SharedPreferences, key: String, onChanged: (SharedPreferences, String) -> T): LiveData<T> {
-    return PreferenceLiveData<T>(sharedPreferences, key) {
+    return PreferenceLiveData(sharedPreferences, key) {
         onChanged(sharedPreferences, it)
     }
 }
