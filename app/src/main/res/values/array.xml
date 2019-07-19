@@ -31,6 +31,7 @@
     </string-array>
 
     <string-array name="resolution_values" translatable="false">
+        <item>480</item>
         <item>720</item>
         <item>1080</item>
         <item>1440</item>
