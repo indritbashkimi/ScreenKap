@@ -59,8 +59,7 @@
             android:gravity="center"
             android:paddingBottom="16dp"
             android:text="@string/source_code"
-            android:textAppearance="?textAppearanceSubtitle1"
-            android:visibility="gone" />
+            android:textAppearance="?textAppearanceSubtitle1" />
 
         <TextView
             android:layout_width="match_parent"
