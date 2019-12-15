@@ -19,10 +19,10 @@ package com.ibashkimi.screenrecorder.about
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import android.webkit.WebView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
 import com.ibashkimi.screenrecorder.R
+import com.ibashkimi.screenrecorder.databinding.FragmentPrivacyPolicyBinding
 
 class PrivacyPolicyFragment : Fragment() {
 
@@ -32,8 +32,9 @@ class PrivacyPolicyFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_privacy_policy, container, false).apply {
-            findViewById<WebView>(R.id.wv_privacy_policy).loadUrl("file:///android_asset/privacy_policy.html")
+        return FragmentPrivacyPolicyBinding.inflate(inflater, container, false).run {
+            wvPrivacyPolicy.loadUrl("file:///android_asset/privacy_policy.html")
+            root
         }
     }
 

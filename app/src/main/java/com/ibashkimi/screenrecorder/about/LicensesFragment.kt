@@ -21,13 +21,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ibashkimi.screenrecorder.R
+import com.ibashkimi.screenrecorder.databinding.AboutLibIntroBinding
+import com.ibashkimi.screenrecorder.databinding.AboutLibraryBinding
+import com.ibashkimi.screenrecorder.databinding.FragmentLicensesBinding
 import java.security.InvalidParameterException
 
 
@@ -50,37 +52,36 @@ class LicensesFragment : Fragment() {
                     R.string.apache_v2))
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root = inflater.inflate(R.layout.fragment_licenses, container, false)
-
-        val recyclerView = root.findViewById<RecyclerView>(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = LibraryAdapter(this.libraries)
-
-        return root
+        return FragmentLicensesBinding.inflate(inflater, container, false).run {
+            recyclerView.layoutManager = LinearLayoutManager(context)
+            recyclerView.adapter = LibraryAdapter(libraries)
+            root
+        }
     }
 
 
     private inner class LibraryAdapter(val libs: Array<Library>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            when (viewType) {
-                VIEW_TYPE_INTRO -> return LibraryIntroHolder(LayoutInflater.from(parent.context)
-                        .inflate(R.layout.about_lib_intro, parent, false))
-                VIEW_TYPE_LIBRARY -> return createLibraryHolder(parent)
+            return when (viewType) {
+                VIEW_TYPE_INTRO -> {
+                    LibraryIntroHolder(AboutLibIntroBinding.inflate(parent.inflater, parent, false))
+                }
+                VIEW_TYPE_LIBRARY -> {
+                    LibraryHolder(AboutLibraryBinding.inflate(parent.inflater, parent, false))
+                }
+                else -> throw InvalidParameterException()
             }
-            throw InvalidParameterException()
         }
 
-        private fun createLibraryHolder(parent: ViewGroup): LibraryHolder {
-            return LibraryHolder(LayoutInflater.from(parent.context)
-                    .inflate(R.layout.about_library, parent, false))
-        }
+        private val ViewGroup.inflater: LayoutInflater
+            get() = LayoutInflater.from(context)
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             if (getItemViewType(position) == VIEW_TYPE_LIBRARY) {
                 bindLibrary(holder as LibraryHolder, libs[position - 1])
             } else {
-                (holder as LibraryIntroHolder).intro.setText(intro)
+                (holder as LibraryIntroHolder).binding.intro.setText(intro)
             }
         }
 
@@ -93,30 +94,26 @@ class LicensesFragment : Fragment() {
         }
 
         private fun bindLibrary(holder: LibraryHolder, lib: Library) {
-            holder.name.setText(lib.name)
-            holder.website.setText(lib.website)
-            holder.licence.setText(lib.license)
+            holder.binding.apply {
+                libraryName.setText(lib.name)
+                libraryLink.setText(lib.website)
+                libraryLicense.setText(lib.license)
 
-            val clickListener: View.OnClickListener = View.OnClickListener {
-                val position = holder.adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    CustomTabsIntent.Builder().build().launchUrl(requireContext(),
-                            Uri.parse(getString(lib.website)))
+                val clickListener: View.OnClickListener = View.OnClickListener {
+                    val position = holder.adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        CustomTabsIntent.Builder().build().launchUrl(requireContext(),
+                                Uri.parse(getString(lib.website)))
+                    }
                 }
+                root.setOnClickListener(clickListener)
             }
-            holder.itemView.setOnClickListener(clickListener)
         }
     }
 
-    private class LibraryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var name: TextView = itemView.findViewById(R.id.library_name)
-        var website: TextView = itemView.findViewById(R.id.library_link)
-        var licence: TextView = itemView.findViewById(R.id.library_license)
-    }
+    private class LibraryHolder(val binding: AboutLibraryBinding) : RecyclerView.ViewHolder(binding.root)
 
-    private class LibraryIntroHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var intro: TextView = itemView as TextView
-    }
+    private class LibraryIntroHolder(val binding: AboutLibIntroBinding) : RecyclerView.ViewHolder(binding.root)
 
     /**
      * Models an open source library we want to credit

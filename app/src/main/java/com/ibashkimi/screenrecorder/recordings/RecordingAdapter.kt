@@ -19,18 +19,16 @@ package com.ibashkimi.screenrecorder.recordings
 import android.net.Uri
 import android.text.format.DateUtils
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.ibashkimi.screenrecorder.R
 import com.ibashkimi.screenrecorder.data.Recording
+import com.ibashkimi.screenrecorder.databinding.ItemRecordingBinding
 import java.text.DecimalFormat
 import kotlin.math.log10
 import kotlin.math.pow
@@ -49,8 +47,8 @@ class RecordingAdapter(items: List<Recording> = emptyList()) : RecyclerView.Adap
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_recording, viewGroup, false)
-        return RecordingViewHolder(view)
+        val binding = ItemRecordingBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
+        return RecordingViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -62,13 +60,7 @@ class RecordingAdapter(items: List<Recording> = emptyList()) : RecyclerView.Adap
     override fun getItemCount() = data.size
 }
 
-class RecordingViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    private val thumbnail: ImageView = view.findViewById(R.id.thumbnail)
-    private val title: TextView = view.findViewById(R.id.title)
-    private val duration: TextView = view.findViewById(R.id.duration)
-    private val modified: TextView = view.findViewById(R.id.modified)
-    private val size: TextView = view.findViewById(R.id.size)
-    private val foreground: View = view.findViewById(R.id.foreground)
+class RecordingViewHolder(private val binding: ItemRecordingBinding) : RecyclerView.ViewHolder(binding.root) {
 
     var recording: Recording? = null
     var pos: Int = -1
@@ -76,14 +68,14 @@ class RecordingViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     fun bind(recording: Recording, position: Int, isSelected: Boolean) {
         this.recording = recording
         this.pos = position
-        this.foreground.isVisible = isSelected
+        binding.foreground.isVisible = isSelected
 
         loadThumbnail(thumbnail, recording.uri)
 
-        title.text = recording.title
-        duration.text = toTime(recording.duration.toLong())
-        modified.text = DateUtils.getRelativeTimeSpanString(recording.modified)
-        size.text = getFileSize(recording.size)
+        binding.title.text = recording.title
+        binding.duration.text = toTime(recording.duration.toLong())
+        binding.modified.text = DateUtils.getRelativeTimeSpanString(recording.modified)
+        binding.size.text = getFileSize(recording.size)
     }
 
     fun getItemDetails(): ItemDetailsLookup.ItemDetails<Recording> = RecordingDetails(pos, recording!!)

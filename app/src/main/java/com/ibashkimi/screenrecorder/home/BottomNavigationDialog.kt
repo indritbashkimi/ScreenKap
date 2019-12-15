@@ -23,18 +23,17 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.navigation.NavigationView
-import com.ibashkimi.screenrecorder.R
+import com.ibashkimi.screenrecorder.databinding.FragmentBottomNavDrawerBinding
 
 class BottomNavigationDialog : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root = inflater.inflate(R.layout.fragment_bottom_nav_drawer, container, false)
-        val navigation = root.findViewById<NavigationView>(R.id.navigation_view)
-        navigation.setNavigationItemSelectedListener {
-            dismiss()
-            NavigationUI.onNavDestinationSelected(it, findNavController())
+        return FragmentBottomNavDrawerBinding.inflate(inflater, container, false).run {
+            navigationView.setNavigationItemSelectedListener {
+                dismiss()
+                NavigationUI.onNavDestinationSelected(it, findNavController())
+            }
+            root
         }
-        return root
     }
 }

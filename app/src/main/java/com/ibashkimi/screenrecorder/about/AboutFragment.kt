@@ -22,36 +22,34 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.ibashkimi.screenrecorder.BuildConfig
 import com.ibashkimi.screenrecorder.R
+import com.ibashkimi.screenrecorder.databinding.FragmentAboutBinding
 
 
 class AboutFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root = inflater.inflate(R.layout.fragment_about, container, false)
-
-        root.findViewById<TextView>(R.id.version).text =
-                getString(R.string.version, BuildConfig.VERSION_NAME)
-        root.findViewById<TextView>(R.id.source_code).setOnClickListener {
-            CustomTabsIntent.Builder().build().launchUrl(requireContext(),
-                    Uri.parse(requireContext().getString(R.string.app_source_code)))
+        return FragmentAboutBinding.inflate(inflater, container, false).run {
+            version.text = getString(R.string.version, BuildConfig.VERSION_NAME)
+            sourceCode.setOnClickListener {
+                CustomTabsIntent.Builder().build().launchUrl(requireContext(),
+                        Uri.parse(requireContext().getString(R.string.app_source_code)))
+            }
+            sendFeedback.setOnClickListener {
+                sendFeedback()
+            }
+            privacyPolicy.setOnClickListener(
+                    Navigation.createNavigateOnClickListener(R.id.action_about_to_privacy_policy)
+            )
+            licenses.setOnClickListener(
+                    Navigation.createNavigateOnClickListener(R.id.action_about_to_licenses)
+            )
+            root
         }
-        root.findViewById<View>(R.id.send_feedback).setOnClickListener {
-            sendFeedback()
-        }
-        root.findViewById<View>(R.id.privacy_policy).setOnClickListener(
-                Navigation.createNavigateOnClickListener(R.id.action_about_to_privacy_policy)
-        )
-        root.findViewById<View>(R.id.licenses).setOnClickListener(
-                Navigation.createNavigateOnClickListener(R.id.action_about_to_licenses)
-        )
-
-        return root
     }
 
     private fun sendFeedback() {
