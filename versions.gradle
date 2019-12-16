@@ -17,26 +17,30 @@
 def versions = [
         android : [
                 compileSdk: 29,
-                buildTools: '29.0.0',
+                buildTools: '29.0.2',
                 minSdk    : 21,
                 targetSdk : 29
         ],
         androidx: [
-                appcompat           : '1.1.0-beta01',
-                browser             : '1.0.0',
+                appcompat           : '1.2.0-alpha01',
+                browser             : '1.2.0-rc01',
                 cardview            : '1.0.0',
-                core                : '1.2.0-alpha02',
-                fragment            : '1.1.0-beta01',
-                lifecycle           : '2.2.0-alpha01',
-                navigation          : '2.1.0-alpha05',
+                core                : '1.2.0-rc01',
+                documentfile        : '1.0.1',
+                fragment            : '1.2.0-rc03',
+                lifecycle           : '2.2.0-rc03',
+                localbroadcastmanager : '1.1.0-alpha01',
+                navigation          : '2.2.0-rc03',
                 paging              : '2.1.0',
-                preference          : '1.1.0-beta01',
-                recyclerview        : '1.1.0-alpha06'
+                preference          : '1.1.0',
+                recyclerview        : '1.1.0-beta04',
+                recyclerviewSelection        : '1.1.0-beta01',
+                swiperefreshlayout  : '1.1.0-alpha03'
         ],
         google  : [
-                material: '1.1.0-alpha07'
+                material: '1.2.0-alpha02'
         ],
-        kotlin  : '1.3.40',
+        kotlin  : '1.3.61',
         test    : [
                 runner  : '1.1.1',
                 espresso: '3.2.0'
@@ -49,10 +53,13 @@ def libraries = [
                 browser              : "androidx.browser:browser:${versions.androidx.browser}",
                 cardview             : "androidx.cardview:cardview:${versions.androidx.cardview}",
                 corektx              : "androidx.core:core-ktx:${versions.androidx.core}",
-                fragment             : "androidx.fragment:fragment:${versions.androidx.fragment}",
+                documentfile         : "androidx.documentfile:documentfile:${versions.androidx.documentfile}",
+                fragment             : "androidx.fragment:fragment-ktx:${versions.androidx.fragment}",
+                localbroadcastmanager: "androidx.localbroadcastmanager:localbroadcastmanager:${versions.androidx.localbroadcastmanager}",
                 preference           : "androidx.preference:preference:${versions.androidx.preference}",
                 recyclerview         : "androidx.recyclerview:recyclerview:${versions.androidx.recyclerview}",
-                recyclerviewSelection: "androidx.recyclerview:recyclerview-selection:${versions.androidx.recyclerview}",
+                recyclerviewSelection: "androidx.recyclerview:recyclerview-selection:${versions.androidx.recyclerviewSelection}",
+                swiperefreshlayout  : "androidx.swiperefreshlayout:swiperefreshlayout:${versions.androidx.swiperefreshlayout}",
         ],
         google    : [
                 material: "com.google.android.material:material:${versions.google.material}"
@@ -67,18 +74,16 @@ def libraries = [
                 common    : "androidx.lifecycle:lifecycle-common-java8:${versions.androidx.lifecycle}",
                 compiler  : "androidx.lifecycle:lifecycle-compiler:${versions.androidx.lifecycle}",
                 extensions: "androidx.lifecycle:lifecycle-extensions:${versions.androidx.lifecycle}",
-                livedata  : "androidx.lifecycle:lifecycle-livedata:${versions.androidx.lifecycle}",
+                livedata  : "androidx.lifecycle:lifecycle-livedata-ktx:${versions.androidx.lifecycle}",
                 runtime   : "androidx.lifecycle:lifecycle-runtime:${versions.androidx.lifecycle}",
                 viewmodel : "androidx.lifecycle:lifecycle-viewmodel:${versions.androidx.lifecycle}"
         ],
         navigation: [
-                fragment   : "androidx.navigation:navigation-fragment:${versions.androidx.navigation}",
-                fragmentktx: "androidx.navigation:navigation-fragment-ktx:${versions.androidx.navigation}",
+                fragment   : "androidx.navigation:navigation-fragment-ktx:${versions.androidx.navigation}",
                 safeArgs: [
                         plugin: "androidx.navigation:navigation-safe-args-gradle-plugin:${versions.androidx.navigation}"
                 ],
-                ui         : "androidx.navigation:navigation-ui:${versions.androidx.navigation}",
-                uiktx      : "androidx.navigation:navigation-ui-ktx:${versions.androidx.navigation}"
+                ui         : "androidx.navigation:navigation-ui-ktx:${versions.androidx.navigation}",
         ],
         test      : [
                 junit   : 'junit:junit:4.12',

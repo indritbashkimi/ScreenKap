@@ -67,14 +67,18 @@ dependencies {
     implementation deps.androidx.browser
     implementation deps.androidx.cardview
     implementation deps.androidx.corektx
+    implementation deps.androidx.documentfile
+    implementation deps.androidx.localbroadcastmanager
     implementation deps.androidx.preference
     implementation deps.androidx.recyclerviewSelection
+    implementation deps.androidx.swiperefreshlayout
     implementation deps.lifecycle.runtime
     implementation deps.lifecycle.extensions
     implementation deps.lifecycle.common
-    implementation deps.navigation.fragmentktx
-    implementation deps.navigation.uiktx
+    implementation deps.lifecycle.livedata
+    implementation deps.navigation.fragment
+    implementation deps.navigation.ui
 
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
-    kapt 'com.github.bumptech.glide:compiler:4.9.0'
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    kapt 'com.github.bumptech.glide:compiler:4.10.0'
 }
