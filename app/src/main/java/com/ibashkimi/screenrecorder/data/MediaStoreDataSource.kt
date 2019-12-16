@@ -25,12 +25,15 @@ import android.database.ContentObserver
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
+import android.os.HandlerThread
 import android.provider.MediaStore
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 
 
 class MediaStoreDataSource(val context: Context, val uri: Uri) : DataSource {
-
-    private val observers = HashMap<ContentChangeObserver, MyContentObserver>()
 
     override fun create(folderUri: Uri, name: String, mimeType: String, extra: ContentValues?): Uri? {
         val values = ContentValues()
@@ -73,7 +76,7 @@ class MediaStoreDataSource(val context: Context, val uri: Uri) : DataSource {
         context.contentResolver.update(uri, values, null, null)
     }
 
-    override fun fetchRecordings(): List<Recording> {
+    fun fetchRecordings(): List<Recording> {
         val recordings = ArrayList<Recording>()
         @SuppressLint("InlinedApi")
         val projection = arrayOf(
@@ -122,29 +125,25 @@ class MediaStoreDataSource(val context: Context, val uri: Uri) : DataSource {
         context.contentResolver.update(uri, values, null, null)
     }
 
-    override fun registerContentChangedObserver(observer: ContentChangeObserver) {
-        val contentObserver = observers[observer] ?: MyContentObserver(observer).apply {
-            observers[observer] = this
+    @ExperimentalCoroutinesApi
+    override fun recordings(): Flow<List<Recording>> = callbackFlow {
+        val thread = HandlerThread("ContentObserverHandler")
+        thread.start()
+        val contentObserver = object : ContentObserver(Handler(thread.looper)) {
+            override fun onChange(selfChange: Boolean) {
+                onChange(selfChange, null)
+            }
+
+            override fun onChange(selfChange: Boolean, uri: Uri?) {
+                offer(fetchRecordings())
+            }
+
+            override fun deliverSelfNotifications() = true
         }
         context.contentResolver.registerContentObserver(uri, true, contentObserver)
-    }
-
-    override fun unregisterContentChangeObserver(observer: ContentChangeObserver) {
-        observers[observer]?.let {
-            context.contentResolver.unregisterContentObserver(it)
-            observers.remove(observer)
+        offer(fetchRecordings())
+        awaitClose {
+            context.contentResolver.unregisterContentObserver(contentObserver)
         }
-    }
-
-    inner class MyContentObserver(private val observer: ContentChangeObserver, handler: Handler = Handler()) : ContentObserver(handler) {
-        override fun onChange(selfChange: Boolean) {
-            onChange(selfChange, null)
-        }
-
-        override fun onChange(selfChange: Boolean, uri: Uri?) {
-            observer.contentChanged()
-        }
-
-        override fun deliverSelfNotifications() = true
     }
 }

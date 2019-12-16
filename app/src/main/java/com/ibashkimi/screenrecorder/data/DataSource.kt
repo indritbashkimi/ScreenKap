@@ -18,6 +18,7 @@ package com.ibashkimi.screenrecorder.data
 
 import android.content.ContentValues
 import android.net.Uri
+import kotlinx.coroutines.flow.Flow
 
 
 interface DataSource {
@@ -28,15 +29,9 @@ interface DataSource {
 
     fun delete(uris: List<Uri>)
 
-    fun fetchRecordings(): List<Recording>
+    fun recordings(): Flow<List<Recording>>
 
     fun rename(uri: Uri, newName: String)
 
     fun update(uri: Uri, values: ContentValues)
-
-    fun registerContentChangedObserver(observer: ContentChangeObserver)
-
-    fun unregisterContentChangeObserver(observer: ContentChangeObserver)
 }
-
-class ContentChangeObserver(val contentChanged: () -> Unit)

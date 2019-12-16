@@ -23,17 +23,12 @@ import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.ibashkimi.screenrecorder.services.RecorderService
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 
 
 class SAFDataSource(val context: Context, val uri: Uri) : DataSource {
-
-    private val observers = ArrayList<ContentChangeObserver>()
-
-    private val receiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            notifyObservers()
-        }
-    }
 
     override fun create(folderUri: Uri, name: String, mimeType: String, extra: ContentValues?): Uri? {
         return DocumentFile.fromTreeUri(context, folderUri)?.createFile(mimeType, name)?.uri
@@ -54,59 +49,63 @@ class SAFDataSource(val context: Context, val uri: Uri) : DataSource {
         notifyObservers()
     }
 
-    override fun fetchRecordings(): List<Recording> {
+    fun fetchRecordings(): List<Recording> {
         val recordings = ArrayList<Recording>()
         DocumentFile.fromTreeUri(context, uri)?.listFiles()?.forEach {
             if (it.type == "video/mp4") {
-                val duration = context.contentResolver
-                        .openFileDescriptor(it.uri, "r")?.fileDescriptor?.let { fd ->
+                context.contentResolver.openFileDescriptor(it.uri, "r")?.fileDescriptor?.let { fd ->
                     val retriever = MediaMetadataRetriever()
                     retriever.setDataSource(fd)
-                    val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                    val time: String? = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
                     retriever.release()
-                    time.toInt()
-                } ?: 0
-                recordings.add(
-                        Recording(it.uri, it.name ?: "", duration, it.length(), it.lastModified())
-                )
+                    time?.toInt()
+                }?.let { duration ->
+                    // Duration is null when the file is corrupted or it is recording
+                    recordings.add(
+                            Recording(it.uri, it.name
+                                    ?: "", duration, it.length(), it.lastModified())
+                    )
+                }
             }
         }
         return recordings
+    }
+
+    override fun recordings(): Flow<List<Recording>> = callbackFlow {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                offer(fetchRecordings())
+            }
+        }
+        registerReceiver(receiver)
+        offer(fetchRecordings())
+        awaitClose {
+            unregisterReceiver(receiver)
+        }
     }
 
     override fun update(uri: Uri, values: ContentValues) {
         notifyObservers()
     }
 
-    override fun registerContentChangedObserver(observer: ContentChangeObserver) {
-        if (!observers.contains(observer)) {
-            observers.add(observer)
-            if (observers.size == 1) {
-                registerReceiver()
-            }
-        }
-    }
-
-    override fun unregisterContentChangeObserver(observer: ContentChangeObserver) {
-        observers.remove(observer)
-        if (observers.isEmpty()) {
-            unregisterReceiver()
-        }
-    }
-
-    private fun registerReceiver() {
+    private fun registerReceiver(receiver: BroadcastReceiver) {
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver,
                 IntentFilter().apply {
+                    addAction(ACTION_CONTENT_CHANGED)
                     addAction(RecorderService.ACTION_RECORDING_COMPLETED)
                     addAction(RecorderService.ACTION_RECORDING_DELETED)
                 })
     }
 
-    private fun unregisterReceiver() {
+    private fun unregisterReceiver(receiver: BroadcastReceiver) {
         LocalBroadcastManager.getInstance(context).unregisterReceiver(receiver)
     }
 
     private fun notifyObservers() {
-        observers.forEach { it.contentChanged() }
+        LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(RecorderService.ACTION_RECORDING_DELETED))
+    }
+
+    companion object {
+        const val ACTION_CONTENT_CHANGED = "action_content_changed"
     }
 }

@@ -18,74 +18,48 @@ package com.ibashkimi.screenrecorder.recordings
 
 import android.app.Application
 import android.content.Context
-import androidx.lifecycle.*
-import com.ibashkimi.screenrecorder.data.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
+import com.ibashkimi.screenrecorder.data.DataManager
+import com.ibashkimi.screenrecorder.data.MediaStoreDataSource
+import com.ibashkimi.screenrecorder.data.Recording
+import com.ibashkimi.screenrecorder.data.SAFDataSource
 import com.ibashkimi.screenrecorder.services.RecorderState
 import com.ibashkimi.screenrecorder.settings.PreferenceHelper
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 
 
+@UseExperimental(ExperimentalCoroutinesApi::class)
 class RecordingsViewModel(app: Application) : AndroidViewModel(app) {
 
     private val context: Context = getApplication()
 
     private var dataManager: DataManager? = null
 
-    private val preferences = PreferenceHelper(context)
-
-    private val uriObserver = ContentChangeObserver {
-        refresh()
-    }
-
-    val recordings: MutableLiveData<List<Recording>>
-
     val recorderState = RecorderState.state
 
+    val recordings: LiveData<List<Recording>>
+
     init {
-        val sortOptions = preferences.createPreferenceChangedLiveData(
-                PreferenceHelper.KEY_ORDER_BY,
-                PreferenceHelper.KEY_SORT_BY
-        )
-        val saveLocation = Transformations.distinctUntilChanged(preferences.saveLocationLiveData)
-        recordings = MediatorLiveData<List<Recording>>().apply {
-            addSource(sortOptions) {
-                this.value?.let { data ->
-                    postValue(processData(data))
-                }
-            }
-            addSource(saveLocation) {
-                preferences.saveLocation?.let {
-                    setNewDataManager(it)
-                    refresh()
-                }
-            }
-        }
+        val preferences = PreferenceHelper(context)
+        recordings = preferences.saveLocationFlow.flatMapLatest {
+            dataManager = createDataManager(it)
+            dataManager?.recordings() ?: emptyFlow()
+        }.flowOn(Dispatchers.IO).combine(preferences.sortOrderOptionsFlow) { recordings, options ->
+            processData(recordings, options)
+        }.flowOn(Dispatchers.Default).asLiveData()
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        dataManager?.unregisterUriChangeObserver(uriObserver)
-    }
-
-    private fun setNewDataManager(saveUri: PreferenceHelper.SaveUri) {
-        android.util.Log.d("RecordingsViewModel", "setNewDataManager called")
-        dataManager?.unregisterUriChangeObserver(uriObserver)
-        val source = when (saveUri.type) {
-            PreferenceHelper.UriType.MEDIA_STORE -> MediaStoreDataSource(context, saveUri.uri)
-            PreferenceHelper.UriType.SAF -> SAFDataSource(context, saveUri.uri)
-        }
-        dataManager = DataManager(source).apply {
-            registerUriChangeObserver(uriObserver)
-        }
-    }
-
-    fun refresh() {
-        dataManager?.let {
-            viewModelScope.launch(Dispatchers.IO) {
-                recordings.postValue(processData(it.fetchRecordings()))
-            }
-        }
+    private fun createDataManager(saveUri: PreferenceHelper.SaveUri?) = when (saveUri?.type) {
+        PreferenceHelper.UriType.MEDIA_STORE -> DataManager(MediaStoreDataSource(context, saveUri.uri))
+        PreferenceHelper.UriType.SAF -> DataManager(SAFDataSource(context, saveUri.uri))
+        else -> null
     }
 
     fun rename(recording: Recording, newName: String) {
@@ -100,15 +74,15 @@ class RecordingsViewModel(app: Application) : AndroidViewModel(app) {
         dataManager?.delete(recordings.map { it.uri })
     }
 
-    private fun processData(recordings: List<Recording>): List<Recording> {
+    private fun processData(recordings: List<Recording>, options: PreferenceHelper.SortOrderOptions): List<Recording> {
         return recordings.filter { !it.isPending }.run {
-            when (preferences.sortBy) {
+            when (options.sortBy) {
                 PreferenceHelper.SortBy.NAME -> sortedBy { it.title }
                 PreferenceHelper.SortBy.DATE -> sortedBy { it.modified }
                 PreferenceHelper.SortBy.DURATION -> sortedBy { it.duration }
                 PreferenceHelper.SortBy.SIZE -> sortedBy { it.size }
             }.run {
-                when (preferences.orderBy) {
+                when (options.orderBy) {
                     PreferenceHelper.OrderBy.ASCENDING -> this
                     PreferenceHelper.OrderBy.DESCENDING -> reversed()
                 }

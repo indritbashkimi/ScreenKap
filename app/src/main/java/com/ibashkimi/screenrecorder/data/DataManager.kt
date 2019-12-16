@@ -18,6 +18,7 @@ package com.ibashkimi.screenrecorder.data
 
 import android.content.ContentValues
 import android.net.Uri
+import kotlinx.coroutines.flow.Flow
 
 
 class DataManager(private val source: DataSource) {
@@ -46,19 +47,11 @@ class DataManager(private val source: DataSource) {
         source.rename(uri, newName)
     }
 
-    fun fetchRecordings(): List<Recording> {
-        return source.fetchRecordings()
+    fun recordings(): Flow<List<Recording>> {
+        return source.recordings()
     }
 
     fun update(uri: Uri, values: ContentValues) {
         source.update(uri, values)
-    }
-
-    fun registerUriChangeObserver(observer: ContentChangeObserver) {
-        source.registerContentChangedObserver(observer)
-    }
-
-    fun unregisterUriChangeObserver(observer: ContentChangeObserver) {
-        source.unregisterContentChangeObserver(observer)
     }
 }

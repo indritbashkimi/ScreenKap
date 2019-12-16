@@ -27,14 +27,18 @@ import android.view.Surface
 import android.view.WindowManager
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import com.ibashkimi.screenrecorder.R
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import java.text.SimpleDateFormat
 import java.util.*
 
+@ExperimentalCoroutinesApi
 class PreferenceHelper(private val context: Context,
-                       private val sharedPreferences: SharedPreferences =
+                       val sharedPreferences: SharedPreferences =
                                PreferenceManager.getDefaultSharedPreferences(context)) {
 
     @Suppress("unused")
@@ -177,6 +181,11 @@ class PreferenceHelper(private val context: Context,
         }
     }
 
+    val saveLocationFlow: Flow<SaveUri?> =
+            preferenceFlow(context.getString(R.string.pref_key_save_location), true) {
+                saveLocation
+            }
+
     fun setSaveLocation(uri: Uri?, uriType: UriType?) {
         sharedPreferences.edit()
                 .putString(context.getString(R.string.pref_key_save_location), uri.toString())
@@ -215,6 +224,22 @@ class PreferenceHelper(private val context: Context,
         set(value) {
             sharedPreferences.edit().putString(KEY_ORDER_BY, value.name).apply()
         }
+
+    val sortOrderOptionsFlow: Flow<SortOrderOptions>
+        get() = callbackFlow {
+            val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+                android.util.Log.d("PreferenceHelper", "preferences changed")
+                offer(SortOrderOptions(sortBy, orderBy))
+            }
+            offer(SortOrderOptions(sortBy, orderBy))
+            android.util.Log.d("PreferenceHelper", "offering options")
+            sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+            awaitClose {
+                android.util.Log.d("PreferenceHelper", "unregistering listener")
+                sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+            }
+        }
+
 
     var recordAudio: Boolean
         get() = getBoolean(R.string.pref_key_audio)
@@ -265,10 +290,6 @@ class PreferenceHelper(private val context: Context,
         }
     }
 
-    fun createPreferenceChangedLiveData(vararg keys: String): LiveData<String> {
-        return createPreferenceChangedLiveData(sharedPreferences, keys.toList())
-    }
-
     private fun getAspectRatio(metrics: DisplayMetrics): Float {
         val width = metrics.widthPixels.toFloat()
         val height = metrics.heightPixels.toFloat()
@@ -303,6 +324,8 @@ class PreferenceHelper(private val context: Context,
         ASCENDING, DESCENDING
     }
 
+    data class SortOrderOptions(val sortBy: SortBy, val orderBy: OrderBy)
+
     data class SaveUri(val uri: Uri, val type: UriType)
 
     enum class UriType {
@@ -312,56 +335,5 @@ class PreferenceHelper(private val context: Context,
     companion object {
         const val KEY_SORT_BY = "sort_by"
         const val KEY_ORDER_BY = "order_by"
-    }
-}
-
-class PreferenceChangedLiveData(private val sharedPreferences: SharedPreferences,
-                                private val keys: List<String>) : MutableLiveData<String>(), SharedPreferences.OnSharedPreferenceChangeListener {
-
-    override fun onActive() {
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onInactive() {
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        if (key in keys) {
-            value = key
-        }
-    }
-}
-
-class PreferenceLiveData<T>(private val sharedPreferences: SharedPreferences,
-                            private val key: String,
-                            private val loadFirst: Boolean = false,
-                            private val onKeyChanged: (String) -> T) : MutableLiveData<T>(), SharedPreferences.OnSharedPreferenceChangeListener {
-
-    override fun onActive() {
-        if (loadFirst) {
-            value = onKeyChanged(key)
-        }
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onInactive() {
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, changed: String) {
-        if (key == changed) {
-            value = onKeyChanged(key)
-        }
-    }
-}
-
-fun createPreferenceChangedLiveData(sharedPreferences: SharedPreferences, keys: List<String>): LiveData<String> {
-    return PreferenceChangedLiveData(sharedPreferences, keys)
-}
-
-fun <T> createPreferenceLiveData(sharedPreferences: SharedPreferences, key: String, onChanged: (SharedPreferences, String) -> T): LiveData<T> {
-    return PreferenceLiveData(sharedPreferences, key) {
-        onChanged(sharedPreferences, it)
     }
 }
