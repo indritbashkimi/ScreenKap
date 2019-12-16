@@ -26,7 +26,6 @@ import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.ibashkimi.screenrecorder.data.Recording
 import com.ibashkimi.screenrecorder.databinding.ItemRecordingBinding
 import java.text.DecimalFormat
@@ -68,26 +67,25 @@ class RecordingViewHolder(private val binding: ItemRecordingBinding) : RecyclerV
     fun bind(recording: Recording, position: Int, isSelected: Boolean) {
         this.recording = recording
         this.pos = position
-        binding.foreground.isVisible = isSelected
-
-        loadThumbnail(thumbnail, recording.uri)
-
-        binding.title.text = recording.title
-        binding.duration.text = toTime(recording.duration.toLong())
-        binding.modified.text = DateUtils.getRelativeTimeSpanString(recording.modified)
-        binding.size.text = getFileSize(recording.size)
+        binding.apply {
+            foreground.isVisible = isSelected
+            thumbnail.load(recording.uri)
+            title.text = recording.title
+            duration.text = toTime(recording.duration.toLong())
+            modified.text = DateUtils.getRelativeTimeSpanString(recording.modified)
+            size.text = getFileSize(recording.size)
+        }
     }
 
     fun getItemDetails(): ItemDetailsLookup.ItemDetails<Recording> = RecordingDetails(pos, recording!!)
 
-    private fun loadThumbnail(imageView: ImageView, uri: Uri) {
-        imageView.clipToOutline = true
-        Glide.with(imageView)
+    private fun ImageView.load(uri: Uri) {
+        clipToOutline = true
+        Glide.with(this)
                 .asBitmap()
-                .apply(RequestOptions().frame(-1))
                 .centerCrop()
                 .load(uri)
-                .into(imageView)
+                .into(this)
     }
 
     private fun getFileSize(size: Long): String {

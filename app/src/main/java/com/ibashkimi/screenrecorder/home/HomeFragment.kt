@@ -154,7 +154,7 @@ class HomeFragment : RecordingListFragment() {
                             true
                         }
                         R.id.share -> {
-                            val recording = selectionTracker.selection!!.first()
+                            val recording = selectionTracker.selection.first()
                             if (selectionTracker.selection.size() == 1) {
                                 showShareRecordingDialog(recording)
                             } else {
@@ -163,7 +163,7 @@ class HomeFragment : RecordingListFragment() {
                             true
                         }
                         R.id.delete -> {
-                            val recording = selectionTracker.selection!!.first()
+                            val recording = selectionTracker.selection.first()
                             if (selectionTracker.selection.size() == 1) {
                                 showDeleteRecordingDialog(recording)
                             } else {
@@ -172,7 +172,7 @@ class HomeFragment : RecordingListFragment() {
                             true
                         }
                         R.id.rename -> {
-                            val recording = selectionTracker.selection!!.first()
+                            val recording = selectionTracker.selection.first()
                             showRenameRecordingDialog(requireContext(), recording)
                             true
                         }
