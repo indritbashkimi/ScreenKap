@@ -29,6 +29,7 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
@@ -306,18 +307,30 @@ class HomeFragment : RecordingListFragment() {
                 .create().show()
     }
 
+    private val String.filename: String
+        get() = substringBeforeLast(".")
+
+    private val String.extension: String
+        get() {
+            val ext = substringAfterLast(".")
+            if (ext.isEmpty())
+                return ""
+            return ".$ext"
+        }
+
     private fun showRenameRecordingDialog(context: Context, recording: Recording) {
         val inflater = LayoutInflater.from(context)
         @SuppressLint("InflateParams")
         val view = inflater.inflate(R.layout.dialog_rename_file, null)
-        val input = view.findViewById<EditText>(R.id.new_name)
-        input.setText(recording.title)
+        val input = view.findViewById<EditText>(R.id.input)
+        input.setText(recording.title.filename)
         input.selectAll()
+        view.findViewById<TextView>(R.id.extension).text = recording.title.extension
 
         AlertDialog.Builder(context)
                 .setTitle(R.string.dialog_title_rename)
                 .setPositiveButton(android.R.string.ok) { dialog, _ ->
-                    val newName = input.text.toString().trim { it <= ' ' }
+                    val newName = input.text.toString().trim { it <= ' ' } + recording.title.extension
                     rename(recording, newName)
                     selectionTracker.clearSelection()
                     dialog.cancel()

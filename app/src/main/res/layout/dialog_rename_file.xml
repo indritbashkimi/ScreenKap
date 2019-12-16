@@ -22,14 +22,27 @@
     android:orientation="horizontal"
     android:padding="20dp">
 
-    <EditText
-        android:id="@+id/new_name"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="@string/new_file_name_hint"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        tools:targetApi="o" />
+        android:layout_weight="1">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/new_file_name_hint"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            tools:targetApi="o" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/extension"
+        tools:text=".mp4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
