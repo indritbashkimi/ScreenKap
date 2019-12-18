@@ -16,22 +16,25 @@
 
 package com.ibashkimi.screenrecorder.services
 
-import android.app.*
-import android.content.ContentValues
+import android.app.Notification
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.ibashkimi.screenrecorder.*
+import com.ibashkimi.screenrecorder.FINISH_NOTIFICATION_CHANNEL_ID
+import com.ibashkimi.screenrecorder.MainActivity
+import com.ibashkimi.screenrecorder.R
+import com.ibashkimi.screenrecorder.RECORDING_NOTIFICATION_CHANNEL_ID
 import com.ibashkimi.screenrecorder.data.DataManager
 import com.ibashkimi.screenrecorder.data.MediaStoreDataSource
 import com.ibashkimi.screenrecorder.data.SAFDataSource
@@ -40,32 +43,7 @@ import com.ibashkimi.screenrecorder.settings.PreferenceHelper
 
 class RecorderService : Service() {
 
-    private var recorder: Recorder? = null
-
-    private var startTime: Long = 0
-
-    private var elapsedTime: Long = 0
-
-    private var state: RecorderState.State
-        get() = RecorderState.state.value ?: RecorderState.State.STOPPED
-        set(value) {
-            RecorderState.state.value = value
-        }
-
-    private lateinit var options: Recorder.Options
-
-    private var dataManager: DataManager? = null
-
-    private fun getDataManager(): DataManager {
-        val saveLocation = PreferenceHelper(this).saveLocation!!
-
-        val d: DataManager = dataManager ?: DataManager((when (saveLocation.type) {
-            PreferenceHelper.UriType.SAF -> SAFDataSource(this, saveLocation.uri)
-            else -> MediaStoreDataSource(this, saveLocation.uri)
-        }))
-        dataManager = d
-        return d
-    }
+    private var session: RecordingSession? = null
 
     private val notificationManager: NotificationManager by lazy {
         getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -76,115 +54,142 @@ class RecorderService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Log.d(TAG, "action: ${intent.action}")
         when (intent.action) {
             ACTION_RECORDING_START ->
-                if (state == RecorderState.State.STOPPED) {
-                    intent.getParcelableExtra<Intent?>(RECORDER_INTENT_DATA)?.let { intentData ->
-                        startForeground(NOTIFICATION_ID_RECORDING, createOnRecordingNotification().build())
-                        val result = intent.getIntExtra(RECORDER_INTENT_RESULT, Activity.RESULT_OK)
-                        val ops = loadOptions()
-                        if (ops == null) {
-                            Toast.makeText(this, R.string.recording_error_message, Toast.LENGTH_SHORT).show()
-                            //delete(options.output.uri)
-                            state = RecorderState.State.STOPPED
-                            this.recorder = null
-                            return START_NOT_STICKY
+                return when (session?.state) {
+                    RecorderState.State.RECORDING -> START_STICKY
+                    RecorderState.State.PAUSED -> {
+                        resume(this)
+                        START_STICKY
+                    }
+                    RecorderState.State.STOPPED, null -> {
+                        startForeground(
+                            NOTIFICATION_ID_RECORDING,
+                            createOnRecordingNotification().build()
+                        )
+                        return (createNewRecordingSession()?.let {
+                            if (it.start(intent)) {
+                                session = it
+                                START_STICKY
+                            } else {
+                                START_NOT_STICKY
+                            }
+                        } ?: START_NOT_STICKY).also {
+                            if (it == START_NOT_STICKY) stopForeground(true)
                         }
-                        this.options = ops
-                        this.recorder = Recorder(this)
-                        return if (this.recorder!!.start(result, intentData, options)) {
-                            startTime = System.currentTimeMillis()
-                            state = RecorderState.State.RECORDING
-                            START_STICKY
-                        } else {
-                            Toast.makeText(this, R.string.recording_error_message, Toast.LENGTH_SHORT).show()
-                            //delete(options.output.uri)
-                            state = RecorderState.State.STOPPED
-                            this.recorder = null
-                            START_NOT_STICKY
-                        }
-                    } ?: return START_NOT_STICKY
-                } else {
-                    return START_STICKY
+                    }
                 }
             ACTION_RECORDING_PAUSE -> {
-                return when (state) {
-                    RecorderState.State.STOPPED -> START_NOT_STICKY
-                    RecorderState.State.RECORDING -> {
-                        recorder!!.pause()
-                        //calculate total elapsed time until pause
-                        elapsedTime += System.currentTimeMillis() - startTime
-
-                        updateNotification(createOnPausedNotification().setUsesChronometer(false).build(), NOTIFICATION_ID_RECORDING)
-                        Toast.makeText(this, R.string.recording_paused_message, Toast.LENGTH_SHORT).show()
-                        state = RecorderState.State.PAUSED
-                        START_STICKY
+                return session?.let {
+                    when (it.state) {
+                        RecorderState.State.RECORDING -> {
+                            it.pause()
+                            updateNotification(
+                                createOnPausedNotification().setUsesChronometer(false).build(),
+                                NOTIFICATION_ID_RECORDING
+                            )
+                            Toast.makeText(
+                                this,
+                                R.string.recording_paused_message,
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                            START_STICKY
+                        }
+                        RecorderState.State.PAUSED -> return START_STICKY
+                        RecorderState.State.STOPPED -> START_NOT_STICKY
                     }
-                    RecorderState.State.PAUSED -> return START_STICKY
-                }
+                    START_STICKY
+                } ?: START_NOT_STICKY
             }
             ACTION_RECORDING_RESUME -> {
-                return when (state) {
-                    RecorderState.State.PAUSED -> {
-                        recorder?.resume()
-                        //Reset startTime to current time again
-                        startTime = System.currentTimeMillis()
-
-                        updateNotification(createOnRecordingNotification().setUsesChronometer(true)
-                                .setWhen(System.currentTimeMillis() - elapsedTime).build(), NOTIFICATION_ID_RECORDING)
-                        state = RecorderState.State.RECORDING
-                        START_STICKY
+                return session?.let {
+                    when (it.state) {
+                        RecorderState.State.PAUSED -> {
+                            it.resume()
+                            updateNotification(
+                                createOnRecordingNotification().setUsesChronometer(true)
+                                    .setWhen(System.currentTimeMillis() - it.elapsedTime).build(),
+                                NOTIFICATION_ID_RECORDING
+                            )
+                            START_STICKY
+                        }
+                        RecorderState.State.RECORDING -> START_STICKY
+                        RecorderState.State.STOPPED -> START_NOT_STICKY
                     }
-                    RecorderState.State.RECORDING -> START_STICKY
-                    RecorderState.State.STOPPED -> START_NOT_STICKY
-                }
+                } ?: START_NOT_STICKY
             }
             ACTION_RECORDING_STOP -> {
-                if (state == RecorderState.State.RECORDING || state == RecorderState.State.PAUSED) {
-                    if (recorder!!.stop()) {
-                        Log.d(TAG, "Recording finished.")
-
-                        val now = System.currentTimeMillis()
-                        val values = ContentValues()
-                        values.put(MediaStore.Video.Media.DATE_ADDED, now)
-                        values.put(MediaStore.Video.Media.DATE_MODIFIED, now / 1000)
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            values.put(MediaStore.Video.Media.IS_PENDING, 0)
+                session?.let {
+                    when (it.state) {
+                        RecorderState.State.RECORDING, RecorderState.State.PAUSED -> {
+                            if (it.stop()) {
+                                Log.d(TAG, "Recording finished.")
+                                onRecordingCompleted()
+                                showFinishNotification(it.options.output.uri)
+                                session = null
+                            } else {
+                                //delete(options.output.uri)
+                                Toast.makeText(
+                                    this,
+                                    getString(R.string.recording_error_message),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
-
-                        getDataManager().update(options.output.uri, values)
-                        dataManager = null
-
-                        LocalBroadcastManager.getInstance(this)
-                                .sendBroadcast(Intent(ACTION_RECORDING_COMPLETED))
-
-                        showFinishNotification()
-                    } else {
-                        //delete(options.output.uri)
-                        Toast.makeText(this, getString(R.string.recording_error_message), Toast.LENGTH_SHORT).show()
+                        RecorderState.State.STOPPED -> {
+                        }
                     }
                 }
+
                 stopForeground(true)
-                state = RecorderState.State.STOPPED
                 stopSelf()
                 return START_NOT_STICKY
 
             }
             ACTION_RECORDING_DELETE -> {
-                intent.getParcelableExtra<Uri>(EXTRA_URI_TO_DELETE)?.let { delete(it) }
+                intent.getParcelableExtra<SaveUri>(EXTRA_RECORDING_DELETE_URI)?.also {
+                    createNewDataManager(it).delete(it.uri)
+                    onRecordingDeleted()
+                }
                 notificationManager.cancel(NOTIFICATION_ID_FINISH)
-                LocalBroadcastManager.getInstance(this)
-                        .sendBroadcast(Intent(ACTION_RECORDING_DELETED))
-                return if (state == RecorderState.State.STOPPED) START_NOT_STICKY else START_STICKY
+                return if (session?.state == RecorderState.State.STOPPED) START_NOT_STICKY else START_STICKY
             }
             else -> return START_NOT_STICKY
         }
     }
 
-    private fun delete(uri: Uri) {
-        // todo a new data manager is created because it's destroyed in on stop
-        getDataManager().delete(uri)
+    private fun createNewDataManager(saveUri: SaveUri): DataManager {
+        return DataManager(
+            (when (saveUri.type) {
+                UriType.SAF -> SAFDataSource(this, saveUri.uri)
+                else -> MediaStoreDataSource(this, saveUri.uri)
+            })
+        )
+    }
+
+    private fun createNewRecordingSession(): RecordingSession? {
+        val preferences = PreferenceHelper(this)
+        val saveLocation = preferences.saveLocation ?: return null
+        val dataManager = createNewDataManager(saveLocation)
+        val options = preferences.generateOptions(dataManager)
+        if (options == null) {
+            Toast.makeText(
+                this,
+                R.string.recording_error_message,
+                Toast.LENGTH_SHORT
+            ).show()
+            return null
+        }
+        return RecordingSession(this, options, dataManager)
+    }
+
+    private fun onRecordingCompleted() = broadcast(ACTION_RECORDING_COMPLETED)
+
+    private fun onRecordingDeleted() = broadcast(ACTION_RECORDING_DELETE)
+
+    private fun broadcast(action: String) {
+        LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(action))
     }
 
     private val pauseAction: NotificationCompat.Action
@@ -256,17 +261,19 @@ class RecorderService : Service() {
                 }
     }
 
-    private fun showFinishNotification() {
-        val contentIntent = PendingIntent.getActivity(this, 0,
-                Intent(this, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT)
+    private fun showFinishNotification(uri: SaveUri) {
+        val contentIntent = PendingIntent.getActivity(
+            this, 0,
+            Intent(this, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
         val sharePendingIntent = PendingIntent.getActivity(this, 0,
                 Intent.createChooser(createShareIntent(options.output.uri), getString(R.string.share)),
                 PendingIntent.FLAG_UPDATE_CURRENT)
 
         val deleteIntent = Intent(this, RecorderService::class.java)
-                .setAction(ACTION_RECORDING_DELETE)
-                .putExtra(EXTRA_URI_TO_DELETE, options.output.uri)
+            .setAction(ACTION_RECORDING_DELETE)
+            .putExtra(EXTRA_RECORDING_DELETE_URI, uri)
 
         val deletePendingIntent = PendingIntent.getService(this, 0,
                 deleteIntent,
@@ -296,39 +303,6 @@ class RecorderService : Service() {
         notificationManager.notify(id, notification)
     }
 
-    private fun loadOptions(): Recorder.Options? {
-        val preferences = PreferenceHelper(this)
-
-        val folderUri = preferences.saveLocation?.uri ?: return null
-
-        val uri = getDataManager()
-                .create(folderUri, preferences.filename, "video/mp4", null) ?: return null
-
-        return preferences.run {
-            Recorder.Options(
-                    video = Recorder.VideoOptions(
-                            resolution = resolution.run {
-                                Recorder.Resolution(first, second)
-                            },
-                            bitrate = videoBitrate,
-                            encoder = videoEncoder,
-                            fps = fps,
-                            virtualDisplayDpi = displayMetrics.densityDpi
-                    ),
-                    audio = if (recordAudio) {
-                        Recorder.AudioOptions.RecordAudio(
-                                source = MediaRecorder.AudioSource.MIC,
-                                samplingRate = audioSamplingRate,
-                                encoder = audioEncoder,
-                                bitRate = audioBitrate
-                        )
-                    } else Recorder.AudioOptions.NoAudio,
-                    output = Recorder.OutputOptions(
-                            uri = uri
-                    ))
-        }
-    }
-
     companion object {
         private val TAG = RecorderService::class.java.simpleName
 
@@ -338,7 +312,7 @@ class RecorderService : Service() {
         const val ACTION_RECORDING_RESUME = "com.ibashkimi.screenrecorder.action.RECORDING_RESUME"
 
         const val ACTION_RECORDING_DELETE = "con.ibashkimi.screenrecorder.action.RECORDING_DELETE"
-        const val EXTRA_URI_TO_DELETE = "arg_delete_uri"
+        const val EXTRA_RECORDING_DELETE_URI = "arg_delete_uri"
 
         const val ACTION_RECORDING_COMPLETED = "com.ibashkimi.screenrecorder.action.RECORDING_COMPLETED"
         const val ACTION_RECORDING_DELETED = "com.ibashkimi.screenrecorder.action.RECORDING_DELETED"

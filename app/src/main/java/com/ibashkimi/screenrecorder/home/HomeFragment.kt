@@ -49,6 +49,7 @@ import com.ibashkimi.screenrecorder.data.Recording
 import com.ibashkimi.screenrecorder.recordings.RecordingListFragment
 import com.ibashkimi.screenrecorder.services.RecorderService
 import com.ibashkimi.screenrecorder.services.RecorderState
+import com.ibashkimi.screenrecorder.services.UriType
 import com.ibashkimi.screenrecorder.settings.PreferenceHelper
 
 
@@ -78,7 +79,7 @@ class HomeFragment : RecordingListFragment() {
                 }
             }
             saveLocation?.let { uri ->
-                if (uri.type == PreferenceHelper.UriType.SAF) {
+                if (uri.type == UriType.SAF) {
                     requireContext().contentResolver.takePersistableUriPermission(uri.uri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION or
                                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
@@ -289,7 +290,7 @@ class HomeFragment : RecordingListFragment() {
                                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 persistedUriPermissions.filter { it.uri == uri }.apply {
                     if (isNotEmpty()) {
-                        PreferenceHelper(requireContext()).setSaveLocation(uri, PreferenceHelper.UriType.SAF)
+                        PreferenceHelper(requireContext()).setSaveLocation(uri, UriType.SAF)
                     }
                 }
             }

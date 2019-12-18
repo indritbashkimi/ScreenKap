@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat
 import androidx.preference.*
 import com.ibashkimi.screenrecorder.R
 import com.ibashkimi.screenrecorder.applyNightMode
+import com.ibashkimi.screenrecorder.services.UriType
 
 
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -190,7 +191,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                     persistedUriPermissions.filter { it.uri == uri }.apply {
                         if (isNotEmpty()) {
-                            preferenceHelper.setSaveLocation(uri, PreferenceHelper.UriType.SAF)
+                            preferenceHelper.setSaveLocation(uri, UriType.SAF)
                             notifyPreferenceChanged(R.string.pref_key_save_location)
                         }
                     }

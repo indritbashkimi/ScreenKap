@@ -29,7 +29,8 @@ import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.preference.PreferenceManager
 import com.ibashkimi.screenrecorder.R
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.ibashkimi.screenrecorder.services.SaveUri
+import com.ibashkimi.screenrecorder.services.UriType
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -325,12 +326,6 @@ class PreferenceHelper(private val context: Context,
     }
 
     data class SortOrderOptions(val sortBy: SortBy, val orderBy: OrderBy)
-
-    data class SaveUri(val uri: Uri, val type: UriType)
-
-    enum class UriType {
-        MEDIA_STORE, SAF
-    }
 
     companion object {
         const val KEY_SORT_BY = "sort_by"

@@ -26,6 +26,8 @@ import com.ibashkimi.screenrecorder.data.MediaStoreDataSource
 import com.ibashkimi.screenrecorder.data.Recording
 import com.ibashkimi.screenrecorder.data.SAFDataSource
 import com.ibashkimi.screenrecorder.services.RecorderState
+import com.ibashkimi.screenrecorder.services.SaveUri
+import com.ibashkimi.screenrecorder.services.UriType
 import com.ibashkimi.screenrecorder.settings.PreferenceHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -56,9 +58,9 @@ class RecordingsViewModel(app: Application) : AndroidViewModel(app) {
         }.flowOn(Dispatchers.Default).asLiveData()
     }
 
-    private fun createDataManager(saveUri: PreferenceHelper.SaveUri?) = when (saveUri?.type) {
-        PreferenceHelper.UriType.MEDIA_STORE -> DataManager(MediaStoreDataSource(context, saveUri.uri))
-        PreferenceHelper.UriType.SAF -> DataManager(SAFDataSource(context, saveUri.uri))
+    private fun createDataManager(saveUri: SaveUri?) = when (saveUri?.type) {
+        UriType.MEDIA_STORE -> DataManager(MediaStoreDataSource(context, saveUri.uri))
+        UriType.SAF -> DataManager(SAFDataSource(context, saveUri.uri))
         else -> null
     }
 

@@ -23,7 +23,6 @@ import android.hardware.display.VirtualDisplay
 import android.media.MediaRecorder
 import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
-import android.net.Uri
 import android.os.Build
 import android.util.Log
 import java.io.IOException
@@ -152,26 +151,4 @@ class Recorder(private val context: Context) {
             stopScreenSharing()
         }
     }
-
-    data class Options(val video: VideoOptions,
-                       val audio: AudioOptions,
-                       val output: OutputOptions)
-
-    data class VideoOptions(val resolution: Resolution,
-                            val encoder: Int = MediaRecorder.VideoEncoder.H264,
-                            val fps: Int = 30,
-                            val bitrate: Int = 7130317,
-                            val virtualDisplayDpi: Int)
-
-    data class Resolution(val width: Int, val height: Int)
-
-    sealed class AudioOptions {
-        object NoAudio : AudioOptions()
-        data class RecordAudio(val source: Int = MediaRecorder.AudioSource.DEFAULT,
-                               val samplingRate: Int = 44100,
-                               val encoder: Int = MediaRecorder.AudioEncoder.AAC,
-                               val bitRate: Int = 128000) : AudioOptions()
-    }
-
-    class OutputOptions(val uri: Uri, val format: Int = MediaRecorder.OutputFormat.DEFAULT)
 }
