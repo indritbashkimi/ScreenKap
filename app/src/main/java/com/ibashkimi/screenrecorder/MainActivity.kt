@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Toolbar?>(R.id.toolbar)?.let {
             setSupportActionBar(it)
             val appBarConfiguration = AppBarConfiguration(
-                    setOf(R.id.home, R.id.navigation_dialog, R.id.more_settings_dialog)
+                setOf(R.id.home, R.id.navigation_dialog, R.id.more_settings_dialog)
             )
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
         }

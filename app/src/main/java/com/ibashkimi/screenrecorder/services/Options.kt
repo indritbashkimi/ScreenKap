@@ -35,9 +35,9 @@ sealed class AudioOptions {
 class OutputOptions(val uri: SaveUri, val format: Int = MediaRecorder.OutputFormat.DEFAULT)
 
 @Parcelize
-data class SaveUri(val uri: Uri, val type: UriType): Parcelable
+data class SaveUri(val uri: Uri, val type: UriType) : Parcelable
 
 @Parcelize
-enum class UriType: Parcelable {
+enum class UriType : Parcelable {
     MEDIA_STORE, SAF
 }

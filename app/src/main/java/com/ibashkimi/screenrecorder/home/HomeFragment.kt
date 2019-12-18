@@ -72,22 +72,29 @@ class HomeFragment : RecordingListFragment() {
             // preferenceHelper.doPostInitCheck()
             // preferenceHelper.checkOutputDirectory()
             // preferenceHelper.checkRecordAudio()
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
-                    != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.RECORD_AUDIO
+                )
+                != PackageManager.PERMISSION_GRANTED
+            ) {
                 if (recordAudio) {
                     recordAudio = false
                 }
             }
             saveLocation?.let { uri ->
                 if (uri.type == UriType.SAF) {
-                    requireContext().contentResolver.takePersistableUriPermission(uri.uri,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                    requireContext().contentResolver.persistedUriPermissions.filter { it.uri == uri.uri }.apply {
-                        if (isEmpty()) {
-                            resetSaveLocation()
+                    requireContext().contentResolver.takePersistableUriPermission(
+                        uri.uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                    requireContext().contentResolver.persistedUriPermissions.filter { it.uri == uri.uri }
+                        .apply {
+                            if (isEmpty()) {
+                                resetSaveLocation()
+                            }
                         }
-                    }
                 }
             }
         }
@@ -124,7 +131,8 @@ class HomeFragment : RecordingListFragment() {
                 }
             }
             setOnLongClickListener {
-                Toast.makeText(requireContext(), R.string.home_fab_record_hint, Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.home_fab_record_hint, Toast.LENGTH_SHORT)
+                    .show()
                 true
             }
         }
@@ -146,7 +154,11 @@ class HomeFragment : RecordingListFragment() {
             }
             inflateMenu(R.menu.home)
             setOnMenuItemClickListener {
-                if (NavigationUI.onNavDestinationSelected(it, Navigation.findNavController(bottomBar))) {
+                if (NavigationUI.onNavDestinationSelected(
+                        it,
+                        Navigation.findNavController(bottomBar)
+                    )
+                ) {
                     true
                 } else {
                     when (it.itemId) {
@@ -234,8 +246,12 @@ class HomeFragment : RecordingListFragment() {
 
     private fun startRecording() {
         // Request Screen recording permission
-        val projectionManager = requireContext().getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-        startActivityForResult(projectionManager.createScreenCaptureIntent(), SCREEN_RECORD_REQUEST_CODE)
+        val projectionManager =
+            requireContext().getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+        startActivityForResult(
+            projectionManager.createScreenCaptureIntent(),
+            SCREEN_RECORD_REQUEST_CODE
+        )
     }
 
     private fun stopRecording() {
@@ -285,9 +301,11 @@ class HomeFragment : RecordingListFragment() {
         if (resultCode == Activity.RESULT_OK) {
             val uri: Uri = data!!.data!!
             requireContext().contentResolver.apply {
-                takePersistableUriPermission(uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
                 persistedUriPermissions.filter { it.uri == uri }.apply {
                     if (isNotEmpty()) {
                         PreferenceHelper(requireContext()).setSaveLocation(uri, UriType.SAF)
@@ -299,13 +317,16 @@ class HomeFragment : RecordingListFragment() {
 
     private fun showChooseTreeUri() {
         AlertDialog.Builder(requireContext())
-                .setTitle(R.string.choose_location_dialog_title)
-                .setPositiveButton(R.string.choose_location_action) { _, _ ->
-                    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                    intent.putExtra("android.provider.extra.INITIAL_URI", MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
-                    startActivityForResult(intent, REQUEST_DOCUMENT_TREE)
-                }
-                .create().show()
+            .setTitle(R.string.choose_location_dialog_title)
+            .setPositiveButton(R.string.choose_location_action) { _, _ ->
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                intent.putExtra(
+                    "android.provider.extra.INITIAL_URI",
+                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                )
+                startActivityForResult(intent, REQUEST_DOCUMENT_TREE)
+            }
+            .create().show()
     }
 
     private val String.filename: String
@@ -329,55 +350,59 @@ class HomeFragment : RecordingListFragment() {
         view.findViewById<TextView>(R.id.extension).text = recording.title.extension
 
         AlertDialog.Builder(context)
-                .setTitle(R.string.dialog_title_rename)
-                .setPositiveButton(android.R.string.ok) { dialog, _ ->
-                    val newName = input.text.toString().trim { it <= ' ' } + recording.title.extension
-                    rename(recording, newName)
-                    selectionTracker.clearSelection()
-                    dialog.cancel()
-                }
-                .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
-                .setView(view)
-                .create()
-                .show()
+            .setTitle(R.string.dialog_title_rename)
+            .setPositiveButton(android.R.string.ok) { dialog, _ ->
+                val newName = input.text.toString().trim { it <= ' ' } + recording.title.extension
+                rename(recording, newName)
+                selectionTracker.clearSelection()
+                dialog.cancel()
+            }
+            .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
+            .setView(view)
+            .create()
+            .show()
     }
 
     private fun showDeleteRecordingDialog(recording: Recording) {
         AlertDialog.Builder(requireContext())
-                .setTitle(R.string.dialog_delete_file_msg)
-                .setPositiveButton(android.R.string.ok) { dialog, _ ->
-                    delete(recording)
-                    selectionTracker.clearSelection()
-                    dialog.cancel()
-                }
-                .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.cancel() }
-                .create()
-                .show()
+            .setTitle(R.string.dialog_delete_file_msg)
+            .setPositiveButton(android.R.string.ok) { dialog, _ ->
+                delete(recording)
+                selectionTracker.clearSelection()
+                dialog.cancel()
+            }
+            .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.cancel() }
+            .create()
+            .show()
     }
 
     private fun showDeleteRecordingsDialog(recordings: List<Recording>) {
         AlertDialog.Builder(requireContext())
-                .setTitle(R.string.dialog_delete_all_msg)
-                .setPositiveButton(android.R.string.ok) { dialog, _ ->
-                    delete(recordings)
-                    selectionTracker.clearSelection()
-                    dialog.cancel()
-                }
-                .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.cancel() }
-                .create()
-                .show()
+            .setTitle(R.string.dialog_delete_all_msg)
+            .setPositiveButton(android.R.string.ok) { dialog, _ ->
+                delete(recordings)
+                selectionTracker.clearSelection()
+                dialog.cancel()
+            }
+            .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.cancel() }
+            .create()
+            .show()
     }
 
     private fun showShareRecordingDialog(recording: Recording) {
-        startActivity(Intent.createChooser(createShareIntent(recording.uri),
-                getString(R.string.notification_finish_title))) // todo
+        startActivity(
+            Intent.createChooser(
+                createShareIntent(recording.uri),
+                getString(R.string.notification_finish_title)
+            )
+        )
     }
 
     private fun createShareIntent(uri: Uri) = Intent()
-            .setAction(Intent.ACTION_SEND)
-            .setType("video/*")
-            .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            .putExtra(Intent.EXTRA_STREAM, uri)
+        .setAction(Intent.ACTION_SEND)
+        .setType("video/*")
+        .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        .putExtra(Intent.EXTRA_STREAM, uri)
 
     private fun shareVideos(recordings: List<Recording>) {
         val videoList = ArrayList<Uri>()
@@ -385,12 +410,16 @@ class HomeFragment : RecordingListFragment() {
             videoList.add(recording.uri)
         }
         val shareIntent = Intent()
-                .setAction(Intent.ACTION_SEND_MULTIPLE)
-                .setType("video/*")
-                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                .putParcelableArrayListExtra(Intent.EXTRA_STREAM, videoList)
-        startActivity(Intent.createChooser(shareIntent,
-                getString(R.string.notification_finish_title)))
+            .setAction(Intent.ACTION_SEND_MULTIPLE)
+            .setType("video/*")
+            .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            .putParcelableArrayListExtra(Intent.EXTRA_STREAM, videoList)
+        startActivity(
+            Intent.createChooser(
+                shareIntent,
+                getString(R.string.notification_finish_title)
+            )
+        )
     }
 
     private fun FloatingActionButton.setImageDrawable(res: Int) {

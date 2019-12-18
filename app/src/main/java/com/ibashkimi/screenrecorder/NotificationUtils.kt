@@ -34,9 +34,9 @@ fun Context.createNotificationChannels() {
     }
     val notificationChannels = ArrayList<NotificationChannel>()
     val recordingChannel = NotificationChannel(
-            RECORDING_NOTIFICATION_CHANNEL_ID,
-            getString(R.string.notification_channel_recording),
-            NotificationManager.IMPORTANCE_HIGH
+        RECORDING_NOTIFICATION_CHANNEL_ID,
+        getString(R.string.notification_channel_recording),
+        NotificationManager.IMPORTANCE_HIGH
     )
     recordingChannel.enableLights(true)
     recordingChannel.lightColor = Color.RED
@@ -46,9 +46,9 @@ fun Context.createNotificationChannels() {
     notificationChannels.add(recordingChannel)
 
     val finishChannel = NotificationChannel(
-            FINISH_NOTIFICATION_CHANNEL_ID,
-            getString(R.string.notification_channel_finish),
-            NotificationManager.IMPORTANCE_DEFAULT
+        FINISH_NOTIFICATION_CHANNEL_ID,
+        getString(R.string.notification_channel_finish),
+        NotificationManager.IMPORTANCE_DEFAULT
     )
     //finishChannel.enableLights(true)
     finishChannel.setShowBadge(true)
@@ -57,5 +57,5 @@ fun Context.createNotificationChannels() {
     notificationChannels.add(finishChannel)
 
     (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
-            .createNotificationChannels(notificationChannels)
+        .createNotificationChannels(notificationChannels)
 }

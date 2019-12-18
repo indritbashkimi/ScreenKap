@@ -37,14 +37,18 @@ import kotlinx.coroutines.flow.callbackFlow
 import java.text.SimpleDateFormat
 import java.util.*
 
-@ExperimentalCoroutinesApi
-class PreferenceHelper(private val context: Context,
-                       val sharedPreferences: SharedPreferences =
-                               PreferenceManager.getDefaultSharedPreferences(context)) {
+class PreferenceHelper(
+    private val context: Context,
+    val sharedPreferences: SharedPreferences =
+        PreferenceManager.getDefaultSharedPreferences(context)
+) {
 
     @Suppress("unused")
     val nightModeLiveData: LiveData<String> by lazy {
-        createPreferenceLiveData(sharedPreferences, context.getString(R.string.pref_key_dark_theme)) { _, _ ->
+        createPreferenceLiveData(
+            sharedPreferences,
+            context.getString(R.string.pref_key_dark_theme)
+        ) { _, _ ->
             nightMode
         }
     }
@@ -87,7 +91,8 @@ class PreferenceHelper(private val context: Context,
         get() = getString(R.string.pref_key_video_bitrate)?.toIntOrNull() ?: 8388608
         set(value) {
             putString(
-                    R.string.pref_key_video_bitrate, value)
+                R.string.pref_key_video_bitrate, value
+            )
         }
     var fps: Int
         get() = getString(R.string.pref_key_fps)?.toIntOrNull() ?: 30
@@ -109,7 +114,7 @@ class PreferenceHelper(private val context: Context,
         val window = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         window.defaultDisplay.getRealMetrics(realDisplayMetrics)
         val resolutionValues = context.resources.getStringArray(R.array.resolution_values)
-                .filter { it.toInt() <= realDisplayMetrics.widthPixels }
+            .filter { it.toInt() <= realDisplayMetrics.widthPixels }
         videoWidth = resolutionValues.lastOrNull()?.toInt() ?: displayMetrics.widthPixels
     }
 
@@ -117,8 +122,12 @@ class PreferenceHelper(private val context: Context,
         get() {
             val width = videoWidth
             val height: Int = (width * getAspectRatio(displayMetrics)).toInt()
-            val orientationPrefs = sharedPreferences.getString(context.getString(R.string.pref_key_orientation), "auto")
-            val screenOrientation = (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation
+            val orientationPrefs = sharedPreferences.getString(
+                context.getString(R.string.pref_key_orientation),
+                "auto"
+            )
+            val screenOrientation =
+                (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation
             val (finalWidth, finalHeight) = when (orientationPrefs) {
                 "auto" -> {
                     if (screenOrientation == Surface.ROTATION_0 || screenOrientation == Surface.ROTATION_180) {
@@ -177,21 +186,28 @@ class PreferenceHelper(private val context: Context,
         }
 
     val saveLocationLiveData: LiveData<SaveUri?> by lazy {
-        PreferenceLiveData(sharedPreferences, context.getString(R.string.pref_key_save_location), true) {
+        PreferenceLiveData(
+            sharedPreferences,
+            context.getString(R.string.pref_key_save_location),
+            true
+        ) {
             saveLocation
         }
     }
 
     val saveLocationFlow: Flow<SaveUri?> =
-            preferenceFlow(context.getString(R.string.pref_key_save_location), true) {
-                saveLocation
-            }
+        preferenceFlow(context.getString(R.string.pref_key_save_location), true) {
+            saveLocation
+        }
 
     fun setSaveLocation(uri: Uri?, uriType: UriType?) {
         sharedPreferences.edit()
-                .putString(context.getString(R.string.pref_key_save_location), uri.toString())
-                .putString(context.getString(R.string.pref_key_save_location_type), uriType?.name?.toLowerCase(Locale.ENGLISH))
-                .apply()
+            .putString(context.getString(R.string.pref_key_save_location), uri.toString())
+            .putString(
+                context.getString(R.string.pref_key_save_location_type),
+                uriType?.name?.toLowerCase(Locale.ENGLISH)
+            )
+            .apply()
     }
 
     fun resetSaveLocation() {

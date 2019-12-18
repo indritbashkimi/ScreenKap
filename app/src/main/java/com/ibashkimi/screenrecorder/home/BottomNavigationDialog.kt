@@ -27,7 +27,11 @@ import com.ibashkimi.screenrecorder.databinding.FragmentBottomNavDrawerBinding
 
 class BottomNavigationDialog : BottomSheetDialogFragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return FragmentBottomNavDrawerBinding.inflate(inflater, container, false).run {
             navigationView.setNavigationItemSelectedListener {
                 dismiss()

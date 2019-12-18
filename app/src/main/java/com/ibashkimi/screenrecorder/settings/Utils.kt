@@ -8,8 +8,10 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class PreferenceChangedLiveData(private val sharedPreferences: SharedPreferences,
-                                private val keys: List<String>) : MutableLiveData<String>(), SharedPreferences.OnSharedPreferenceChangeListener {
+class PreferenceChangedLiveData(
+    private val sharedPreferences: SharedPreferences,
+    private val keys: List<String>
+) : MutableLiveData<String>(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     override fun onActive() {
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
@@ -26,10 +28,12 @@ class PreferenceChangedLiveData(private val sharedPreferences: SharedPreferences
     }
 }
 
-class PreferenceLiveData<T>(private val sharedPreferences: SharedPreferences,
-                            private val key: String,
-                            private val loadFirst: Boolean = false,
-                            private val onKeyChanged: (String) -> T) : MutableLiveData<T>(), SharedPreferences.OnSharedPreferenceChangeListener {
+class PreferenceLiveData<T>(
+    private val sharedPreferences: SharedPreferences,
+    private val key: String,
+    private val loadFirst: Boolean = false,
+    private val onKeyChanged: (String) -> T
+) : MutableLiveData<T>(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     override fun onActive() {
         if (loadFirst) {
@@ -50,9 +54,11 @@ class PreferenceLiveData<T>(private val sharedPreferences: SharedPreferences,
 }
 
 @ExperimentalCoroutinesApi
-fun preferencesChangedFlow(sharedPreferences: SharedPreferences,
-                           keys: List<String>,
-                           emitOnCreate: Boolean = false): Flow<String> = callbackFlow {
+fun preferencesChangedFlow(
+    sharedPreferences: SharedPreferences,
+    keys: List<String>,
+    emitOnCreate: Boolean = false
+): Flow<String> = callbackFlow {
     val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key in keys) {
             offer(key)
@@ -69,10 +75,12 @@ fun preferencesChangedFlow(sharedPreferences: SharedPreferences,
 }
 
 @ExperimentalCoroutinesApi
-fun <T> preferenceFlow(sharedPreferences: SharedPreferences,
-                       key: String,
-                       loadFirst: Boolean = false,
-                       onKeyChanged: (String) -> T): Flow<T> = callbackFlow {
+fun <T> preferenceFlow(
+    sharedPreferences: SharedPreferences,
+    key: String,
+    loadFirst: Boolean = false,
+    onKeyChanged: (String) -> T
+): Flow<T> = callbackFlow {
     val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, changed ->
         if (key == changed) {
             offer(onKeyChanged(key))
@@ -87,17 +95,26 @@ fun <T> preferenceFlow(sharedPreferences: SharedPreferences,
     }
 }
 
-fun <T> PreferenceHelper.preferenceFlow(key: String,
-                                        loadFirst: Boolean = false,
-                                        onKeyChanged: (String) -> T): Flow<T> =
-        preferenceFlow(sharedPreferences, key, loadFirst, onKeyChanged)
+fun <T> PreferenceHelper.preferenceFlow(
+    key: String,
+    loadFirst: Boolean = false,
+    onKeyChanged: (String) -> T
+): Flow<T> =
+    preferenceFlow(sharedPreferences, key, loadFirst, onKeyChanged)
 
 
-fun createPreferenceChangedLiveData(sharedPreferences: SharedPreferences, keys: List<String>): LiveData<String> {
+fun createPreferenceChangedLiveData(
+    sharedPreferences: SharedPreferences,
+    keys: List<String>
+): LiveData<String> {
     return PreferenceChangedLiveData(sharedPreferences, keys)
 }
 
-fun <T> createPreferenceLiveData(sharedPreferences: SharedPreferences, key: String, onChanged: (SharedPreferences, String) -> T): LiveData<T> {
+fun <T> createPreferenceLiveData(
+    sharedPreferences: SharedPreferences,
+    key: String,
+    onChanged: (SharedPreferences, String) -> T
+): LiveData<T> {
     return PreferenceLiveData(sharedPreferences, key) {
         onChanged(sharedPreferences, it)
     }

@@ -198,9 +198,10 @@ class RecorderService : Service() {
                 action = ACTION_RECORDING_PAUSE
             }
             return NotificationCompat.Action(
-                    R.drawable.ic_notification_pause,
-                    getString(R.string.notification_action_pause),
-                    PendingIntent.getService(this, 0, pauseIntent, 0))
+                R.drawable.ic_notification_pause,
+                getString(R.string.notification_action_pause),
+                PendingIntent.getService(this, 0, pauseIntent, 0)
+            )
         }
 
     private val resumeAction: NotificationCompat.Action
@@ -208,9 +209,11 @@ class RecorderService : Service() {
             val resumeIntent = Intent(this, RecorderService::class.java).apply {
                 action = ACTION_RECORDING_RESUME
             }
-            return NotificationCompat.Action(R.drawable.ic_notification_resume,
-                    getString(R.string.notification_action_resume),
-                    PendingIntent.getService(this, 0, resumeIntent, 0))
+            return NotificationCompat.Action(
+                R.drawable.ic_notification_resume,
+                getString(R.string.notification_action_resume),
+                PendingIntent.getService(this, 0, resumeIntent, 0)
+            )
         }
 
     private val openAppPendingIntent: PendingIntent
@@ -224,9 +227,11 @@ class RecorderService : Service() {
             val stopIntent = Intent(this, RecorderService::class.java).apply {
                 this.action = ACTION_RECORDING_STOP
             }
-            return NotificationCompat.Action(R.drawable.ic_notification_stop,
-                    getString(R.string.notification_action_stop),
-                    PendingIntent.getService(this, 0, stopIntent, 0))
+            return NotificationCompat.Action(
+                R.drawable.ic_notification_stop,
+                getString(R.string.notification_action_stop),
+                PendingIntent.getService(this, 0, stopIntent, 0)
+            )
         }
 
     private fun createOnRecordingNotification(): NotificationCompat.Builder {
@@ -247,18 +252,18 @@ class RecorderService : Service() {
 
     private fun createNotification(vararg actions: NotificationCompat.Action): NotificationCompat.Builder {
         return NotificationCompat.Builder(this, RECORDING_NOTIFICATION_CHANNEL_ID)
-                .setContentTitle(getString(R.string.notification_title))
-                .setContentText(getString(R.string.notification_summary_recording))
-                .setTicker(getString(R.string.notification_title))
-                .setSmallIcon(R.drawable.ic_notification_icon)
-                .setUsesChronometer(true)
-                .setOngoing(true)
-                .setColor(Color.RED)
-                .setContentIntent(openAppPendingIntent)
-                .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
-                .apply {
-                    actions.forEach { addAction(it) }
-                }
+            .setContentTitle(getString(R.string.notification_title))
+            .setContentText(getString(R.string.notification_summary_recording))
+            .setTicker(getString(R.string.notification_title))
+            .setSmallIcon(R.drawable.ic_notification_icon)
+            .setUsesChronometer(true)
+            .setOngoing(true)
+            .setColor(Color.RED)
+            .setContentIntent(openAppPendingIntent)
+            .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
+            .apply {
+                actions.forEach { addAction(it) }
+            }
     }
 
     private fun showFinishNotification(uri: SaveUri) {
@@ -267,36 +272,48 @@ class RecorderService : Service() {
             Intent(this, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val sharePendingIntent = PendingIntent.getActivity(this, 0,
-                Intent.createChooser(createShareIntent(options.output.uri), getString(R.string.share)),
-                PendingIntent.FLAG_UPDATE_CURRENT)
+        val sharePendingIntent = PendingIntent.getActivity(
+            this, 0,
+            Intent.createChooser(createShareIntent(uri.uri), getString(R.string.share)),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
         val deleteIntent = Intent(this, RecorderService::class.java)
             .setAction(ACTION_RECORDING_DELETE)
             .putExtra(EXTRA_RECORDING_DELETE_URI, uri)
 
-        val deletePendingIntent = PendingIntent.getService(this, 0,
-                deleteIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT)
+        val deletePendingIntent = PendingIntent.getService(
+            this, 0,
+            deleteIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
-        val shareAction = NotificationCompat.Action(R.drawable.ic_share, getString(R.string.share), sharePendingIntent)
-        val deleteAction = NotificationCompat.Action(R.drawable.ic_delete, getString(R.string.notification_action_delete), deletePendingIntent)
+        val shareAction = NotificationCompat.Action(
+            R.drawable.ic_share,
+            getString(R.string.share),
+            sharePendingIntent
+        )
+        val deleteAction = NotificationCompat.Action(
+            R.drawable.ic_delete,
+            getString(R.string.notification_action_delete),
+            deletePendingIntent
+        )
         val notification = NotificationCompat.Builder(this, FINISH_NOTIFICATION_CHANNEL_ID)
-                .setContentTitle(getString(R.string.notification_finish_title))
-                .setContentText(getString(R.string.notification_finish_summary))
-                .setSmallIcon(R.drawable.ic_notification_icon)
-                .setAutoCancel(true)
-                .setContentIntent(contentIntent)
-                .addAction(shareAction)
-                .addAction(deleteAction)
+            .setContentTitle(getString(R.string.notification_finish_title))
+            .setContentText(getString(R.string.notification_finish_summary))
+            .setSmallIcon(R.drawable.ic_notification_icon)
+            .setAutoCancel(true)
+            .setContentIntent(contentIntent)
+            .addAction(shareAction)
+            .addAction(deleteAction)
         updateNotification(notification.build(), NOTIFICATION_ID_FINISH)
     }
 
     private fun createShareIntent(uri: Uri) = Intent()
-            .setAction(Intent.ACTION_SEND)
-            .setType("video/*")
-            .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            .putExtra(Intent.EXTRA_STREAM, uri)
+        .setAction(Intent.ACTION_SEND)
+        .setType("video/*")
+        .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        .putExtra(Intent.EXTRA_STREAM, uri)
 
     //Update existing notification with its id and new Notification data
     private fun updateNotification(notification: Notification, id: Int) {
@@ -314,7 +331,8 @@ class RecorderService : Service() {
         const val ACTION_RECORDING_DELETE = "con.ibashkimi.screenrecorder.action.RECORDING_DELETE"
         const val EXTRA_RECORDING_DELETE_URI = "arg_delete_uri"
 
-        const val ACTION_RECORDING_COMPLETED = "com.ibashkimi.screenrecorder.action.RECORDING_COMPLETED"
+        const val ACTION_RECORDING_COMPLETED =
+            "com.ibashkimi.screenrecorder.action.RECORDING_COMPLETED"
         const val ACTION_RECORDING_DELETED = "com.ibashkimi.screenrecorder.action.RECORDING_DELETED"
 
         const val RECORDER_INTENT_DATA = "recorder_intent_data"

@@ -31,7 +31,11 @@ class PrivacyPolicyFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return FragmentPrivacyPolicyBinding.inflate(inflater, container, false).run {
             wvPrivacyPolicy.loadUrl("file:///android_asset/privacy_policy.html")
             root
@@ -44,8 +48,10 @@ class PrivacyPolicyFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.open_website) {
-            CustomTabsIntent.Builder().build().launchUrl(requireContext(),
-                    Uri.parse(getString(R.string.privacy_policy_website)))
+            CustomTabsIntent.Builder().build().launchUrl(
+                requireContext(),
+                Uri.parse(getString(R.string.privacy_policy_website))
+            )
             return true
         }
         return super.onOptionsItemSelected(item)

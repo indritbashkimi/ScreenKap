@@ -44,7 +44,11 @@ abstract class RecordingListFragment : Fragment() {
 
     protected val viewModel: RecordingsViewModel by viewModels()
 
-    final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    final override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val root = inflater.inflate(layoutRes, container, false)
 
         messageView = root.findViewById(R.id.message_no_video)
@@ -58,16 +62,17 @@ abstract class RecordingListFragment : Fragment() {
             val divider = DividerItemDecoration(requireContext(), linearLayoutManager.orientation)
             addItemDecoration(divider)
             selectionTracker = SelectionTracker.Builder(
-                    "recording-selection-id",
-                    this,
-                    RecordingKeyProvider(recordingsAdapter),
-                    RecordingDetailsLookup(this),
-                    StorageStrategy.createParcelableStorage(Recording::class.java))
-                    .withOnItemActivatedListener { item, _ ->
-                        onRecordingClick(item.selectionKey!!)
-                        return@withOnItemActivatedListener true
-                    }
-                    .build()
+                "recording-selection-id",
+                this,
+                RecordingKeyProvider(recordingsAdapter),
+                RecordingDetailsLookup(this),
+                StorageStrategy.createParcelableStorage(Recording::class.java)
+            )
+                .withOnItemActivatedListener { item, _ ->
+                    onRecordingClick(item.selectionKey!!)
+                    return@withOnItemActivatedListener true
+                }
+                .build()
             savedInstanceState?.let { selectionTracker.onRestoreInstanceState(it) }
             recordingsAdapter.selectionTracker = selectionTracker
         }
@@ -84,10 +89,11 @@ abstract class RecordingListFragment : Fragment() {
     protected open fun onRecordingClick(recording: Recording) {
         val intent = Intent()
         intent.setAction(Intent.ACTION_VIEW)
-                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                .setDataAndType(
-                        recording.uri,
-                        requireContext().contentResolver.getType(recording.uri))
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            .setDataAndType(
+                recording.uri,
+                requireContext().contentResolver.getType(recording.uri)
+            )
         startActivity(intent)
     }
 

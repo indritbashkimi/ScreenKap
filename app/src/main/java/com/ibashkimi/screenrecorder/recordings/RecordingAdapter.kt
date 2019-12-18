@@ -33,7 +33,8 @@ import kotlin.math.log10
 import kotlin.math.pow
 
 
-class RecordingAdapter(items: List<Recording> = emptyList()) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RecordingAdapter(items: List<Recording> = emptyList()) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val data: ArrayList<Recording> = ArrayList<Recording>(items.size).apply { addAll(items) }
 
@@ -46,7 +47,8 @@ class RecordingAdapter(items: List<Recording> = emptyList()) : RecyclerView.Adap
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val binding = ItemRecordingBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
+        val binding =
+            ItemRecordingBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
         return RecordingViewHolder(binding)
     }
 
@@ -59,7 +61,8 @@ class RecordingAdapter(items: List<Recording> = emptyList()) : RecyclerView.Adap
     override fun getItemCount() = data.size
 }
 
-class RecordingViewHolder(private val binding: ItemRecordingBinding) : RecyclerView.ViewHolder(binding.root) {
+class RecordingViewHolder(private val binding: ItemRecordingBinding) :
+    RecyclerView.ViewHolder(binding.root) {
 
     var recording: Recording? = null
     var pos: Int = -1
@@ -77,15 +80,16 @@ class RecordingViewHolder(private val binding: ItemRecordingBinding) : RecyclerV
         }
     }
 
-    fun getItemDetails(): ItemDetailsLookup.ItemDetails<Recording> = RecordingDetails(pos, recording!!)
+    fun getItemDetails(): ItemDetailsLookup.ItemDetails<Recording> =
+        RecordingDetails(pos, recording!!)
 
     private fun ImageView.load(uri: Uri) {
         clipToOutline = true
         Glide.with(this)
-                .asBitmap()
-                .centerCrop()
-                .load(uri)
-                .into(this)
+            .asBitmap()
+            .centerCrop()
+            .load(uri)
+            .into(this)
     }
 
     private fun getFileSize(size: Long): String {

@@ -76,7 +76,10 @@ class RecordingsViewModel(app: Application) : AndroidViewModel(app) {
         dataManager?.delete(recordings.map { it.uri })
     }
 
-    private fun processData(recordings: List<Recording>, options: PreferenceHelper.SortOrderOptions): List<Recording> {
+    private fun processData(
+        recordings: List<Recording>,
+        options: PreferenceHelper.SortOrderOptions
+    ): List<Recording> {
         return recordings.filter { !it.isPending }.run {
             when (options.sortBy) {
                 PreferenceHelper.SortBy.NAME -> sortedBy { it.title }

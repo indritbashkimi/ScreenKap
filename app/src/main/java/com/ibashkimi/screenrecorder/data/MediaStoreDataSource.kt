@@ -35,7 +35,12 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class MediaStoreDataSource(val context: Context, val uri: Uri) : DataSource {
 
-    override fun create(folderUri: Uri, name: String, mimeType: String, extra: ContentValues?): Uri? {
+    override fun create(
+        folderUri: Uri,
+        name: String,
+        mimeType: String,
+        extra: ContentValues?
+    ): Uri? {
         val values = ContentValues()
         //values.put(MediaStore.Video.Media.TITLE, fileTitle)
         values.put(MediaStore.Video.Media.DISPLAY_NAME, name)
@@ -49,8 +54,10 @@ class MediaStoreDataSource(val context: Context, val uri: Uri) : DataSource {
             values.put(MediaStore.Video.Media.IS_PENDING, 1)
             extra?.apply {
                 if (containsKey(MediaStore.Video.Media.RELATIVE_PATH))
-                    values.put(MediaStore.Video.Media.RELATIVE_PATH,
-                            extra.getAsString(MediaStore.Video.Media.RELATIVE_PATH))
+                    values.put(
+                        MediaStore.Video.Media.RELATIVE_PATH,
+                        extra.getAsString(MediaStore.Video.Media.RELATIVE_PATH)
+                    )
             }
         }
 
@@ -80,17 +87,20 @@ class MediaStoreDataSource(val context: Context, val uri: Uri) : DataSource {
         val recordings = ArrayList<Recording>()
         @SuppressLint("InlinedApi")
         val projection = arrayOf(
-                MediaStore.Video.Media._ID,
-                MediaStore.Video.Media.DISPLAY_NAME,
-                MediaStore.Video.Media.DATE_MODIFIED,
-                MediaStore.Video.Media.SIZE,
-                MediaStore.Video.Media.DURATION,
-                MediaStore.Video.Media.IS_PENDING)
+            MediaStore.Video.Media._ID,
+            MediaStore.Video.Media.DISPLAY_NAME,
+            MediaStore.Video.Media.DATE_MODIFIED,
+            MediaStore.Video.Media.SIZE,
+            MediaStore.Video.Media.DURATION,
+            MediaStore.Video.Media.IS_PENDING
+        )
 
         // Note: newUri works also with DocumentFile uris. Otherwise this is not necessary.
         //val newUri = DocumentsContract.buildChildDocumentsUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri))
-        context.contentResolver.query(uri,
-                projection, null, null, null)?.apply {
+        context.contentResolver.query(
+            uri,
+            projection, null, null, null
+        )?.apply {
             if (moveToFirst()) {
                 do {
                     val isPending: Boolean = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -99,21 +109,34 @@ class MediaStoreDataSource(val context: Context, val uri: Uri) : DataSource {
                         false
                     }
                     val displayName = getString(
-                            getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME))
+                        getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)
+                    )
                     val modified = getLong(
-                            getColumnIndexOrThrow(MediaStore.Video.Media.DATE_MODIFIED))
+                        getColumnIndexOrThrow(MediaStore.Video.Media.DATE_MODIFIED)
+                    )
                     val size = getLong(
-                            getColumnIndexOrThrow(MediaStore.Video.Media.SIZE))
+                        getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)
+                    )
                     val duration = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         getInt(getColumnIndexOrThrow(MediaStore.Video.Media.DURATION))
                     } else {
                         0
                     }
                     val fileUri = ContentUris.withAppendedId(
-                            uri,
-                            getLong(getColumnIndex(MediaStore.Video.Media._ID)))
+                        uri,
+                        getLong(getColumnIndex(MediaStore.Video.Media._ID))
+                    )
                     // DATE_MODIFIED is in seconds
-                    recordings.add(Recording(fileUri, displayName, duration, size, modified * 1000, isPending))
+                    recordings.add(
+                        Recording(
+                            fileUri,
+                            displayName,
+                            duration,
+                            size,
+                            modified * 1000,
+                            isPending
+                        )
+                    )
                 } while (moveToNext())
             }
             close()

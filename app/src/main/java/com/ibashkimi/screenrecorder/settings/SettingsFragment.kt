@@ -34,7 +34,8 @@ import com.ibashkimi.screenrecorder.applyNightMode
 import com.ibashkimi.screenrecorder.services.UriType
 
 
-class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+class SettingsFragment : PreferenceFragmentCompat(),
+    SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var recordAudio: SwitchPreference
 
@@ -67,22 +68,25 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         if (preference.key == getString(R.string.pref_key_save_location)) {
             AlertDialog.Builder(requireContext())
-                    .setTitle("Save location")
-                    .setMessage("Recordings are saved in ${preferenceHelper.saveLocation?.uri?.toReadableString()}")
-                    .setNeutralButton(R.string.reset_save_location) { dialog, _ ->
-                        preferenceHelper.resetSaveLocation()
-                        dialog.dismiss()
-                    }
-                    .setNegativeButton(android.R.string.cancel) { dialog, _ ->
-                        dialog.cancel()
-                    }
-                    .setPositiveButton(R.string.change_save_location) { dialog, _ ->
-                        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                        intent.putExtra("android.provider.extra.INITIAL_URI", preferenceHelper.saveLocation?.uri)
-                        startActivityForResult(intent, REQUEST_DOCUMENT_TREE)
-                        dialog.dismiss()
-                    }
-                    .create().show()
+                .setTitle("Save location")
+                .setMessage("Recordings are saved in ${preferenceHelper.saveLocation?.uri?.toReadableString()}")
+                .setNeutralButton(R.string.reset_save_location) { dialog, _ ->
+                    preferenceHelper.resetSaveLocation()
+                    dialog.dismiss()
+                }
+                .setNegativeButton(android.R.string.cancel) { dialog, _ ->
+                    dialog.cancel()
+                }
+                .setPositiveButton(R.string.change_save_location) { dialog, _ ->
+                    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+                    intent.putExtra(
+                        "android.provider.extra.INITIAL_URI",
+                        preferenceHelper.saveLocation?.uri
+                    )
+                    startActivityForResult(intent, REQUEST_DOCUMENT_TREE)
+                    dialog.dismiss()
+                }
+                .create().show()
             return true
         }
         return super.onPreferenceTreeClick(preference)
@@ -91,29 +95,33 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onResume() {
         super.onResume()
         preferenceScreen.sharedPreferences
-                .registerOnSharedPreferenceChangeListener(this)
+            .registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onPause() {
         super.onPause()
         preferenceScreen.sharedPreferences
-                .unregisterOnSharedPreferenceChangeListener(this)
+            .unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
             getString(R.string.pref_key_dark_theme) -> {
                 requireActivity().applyNightMode(
-                        PreferenceHelper(requireContext()).nightMode
+                    PreferenceHelper(requireContext()).nightMode
                 )
             }
             getString(R.string.pref_key_save_location) -> {
                 val uri = preferenceHelper.saveLocation?.uri
                 findPreference<Preference>(key)?.summary =
-                        uri?.toReadableString()
-                                ?: "Click to choose where to save the recordings" // todo
+                    uri?.toReadableString()
+                        ?: "Click to choose where to save the recordings" // todo
             }
-            getString(R.string.pref_key_resolution) -> initResolutionPreference(findPreference<Preference>(key) as ListPreference)
+            getString(R.string.pref_key_resolution) -> initResolutionPreference(
+                findPreference<Preference>(
+                    key
+                ) as ListPreference
+            )
             getString(R.string.pref_key_audio) -> if (recordAudio.isChecked) {
                 requestAudioPermission()
             }
@@ -129,7 +137,11 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         when (requestCode) {
             REQUEST_AUDIO_PERMISSION -> {
                 checkAudioRecPermission()
@@ -139,30 +151,38 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     private fun checkAudioRecPermission() {
         if (recordAudio.isChecked) {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
-                    != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.RECORD_AUDIO
+                )
+                != PackageManager.PERMISSION_GRANTED
+            ) {
                 recordAudio.isChecked = false
                 if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
                     AlertDialog.Builder(requireContext())
-                            .setMessage(R.string.audio_permission_need)
-                            .setPositiveButton(R.string.dialog_ask_again) { _, _ ->
-                                requestAudioPermission()
-                            }
-                            .setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
-                                dialogInterface.dismiss()
-                            }
-                            .create().show()
+                        .setMessage(R.string.audio_permission_need)
+                        .setPositiveButton(R.string.dialog_ask_again) { _, _ ->
+                            requestAudioPermission()
+                        }
+                        .setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
+                            dialogInterface.dismiss()
+                        }
+                        .create().show()
                 } else {
                     AlertDialog.Builder(requireContext())
-                            .setMessage(R.string.audio_permission_need)
-                            .setPositiveButton(R.string.dialog_open_app_settings) { _, _ ->
-                                startActivity(Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                        Uri.fromParts("package", requireActivity().packageName, null)))
-                            }
-                            .setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
-                                dialogInterface.dismiss()
-                            }
-                            .create().show()
+                        .setMessage(R.string.audio_permission_need)
+                        .setPositiveButton(R.string.dialog_open_app_settings) { _, _ ->
+                            startActivity(
+                                Intent(
+                                    android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                    Uri.fromParts("package", requireActivity().packageName, null)
+                                )
+                            )
+                        }
+                        .setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
+                            dialogInterface.dismiss()
+                        }
+                        .create().show()
                 }
             }
         }
@@ -174,9 +194,9 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     private fun initResolutionPreference(resolutionPreference: ListPreference) {
         val resolutionValues = resources.getStringArray(R.array.resolution_values)
-                .filter { it.toInt() <= realDisplayMetrics.widthPixels }
+            .filter { it.toInt() <= realDisplayMetrics.widthPixels }
         val resolutionTitles = resources.getStringArray(R.array.resolution_entries)
-                .slice(0 until resolutionValues.size)
+            .slice(resolutionValues.indices)
         resolutionPreference.entryValues = resolutionValues.toTypedArray()
         resolutionPreference.entries = resolutionTitles.toTypedArray()
     }
@@ -186,9 +206,11 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             if (resultCode == Activity.RESULT_OK) {
                 val uri: Uri = data!!.data!!
                 requireContext().contentResolver.apply {
-                    takePersistableUriPermission(uri,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                    takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
                     persistedUriPermissions.filter { it.uri == uri }.apply {
                         if (isNotEmpty()) {
                             preferenceHelper.setSaveLocation(uri, UriType.SAF)

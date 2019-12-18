@@ -22,7 +22,8 @@ import androidx.recyclerview.selection.ItemKeyProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.ibashkimi.screenrecorder.data.Recording
 
-class RecordingDetails(private val adapterPosition: Int, val recording: Recording) : ItemDetailsLookup.ItemDetails<Recording>() {
+class RecordingDetails(private val adapterPosition: Int, val recording: Recording) :
+    ItemDetailsLookup.ItemDetails<Recording>() {
     override fun getSelectionKey(): Recording? {
         return recording
     }
@@ -32,7 +33,8 @@ class RecordingDetails(private val adapterPosition: Int, val recording: Recordin
     }
 }
 
-class RecordingDetailsLookup(private val recyclerView: RecyclerView) : ItemDetailsLookup<Recording>() {
+class RecordingDetailsLookup(private val recyclerView: RecyclerView) :
+    ItemDetailsLookup<Recording>() {
     override fun getItemDetails(e: MotionEvent): ItemDetails<Recording>? {
         return recyclerView.findChildViewUnder(e.x, e.y)?.let {
             (recyclerView.getChildViewHolder(it) as? RecordingViewHolder)?.getItemDetails()
@@ -40,7 +42,8 @@ class RecordingDetailsLookup(private val recyclerView: RecyclerView) : ItemDetai
     }
 }
 
-class RecordingKeyProvider(var adapter: RecordingAdapter) : ItemKeyProvider<Recording>(SCOPE_CACHED) {
+class RecordingKeyProvider(var adapter: RecordingAdapter) :
+    ItemKeyProvider<Recording>(SCOPE_CACHED) {
     override fun getKey(position: Int): Recording? {
         return adapter.data[position]
     }

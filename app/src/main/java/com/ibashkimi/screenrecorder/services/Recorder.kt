@@ -130,7 +130,10 @@ class Recorder(private val context: Context) {
             Log.i("Recorder", "MediaProjection Stopped")
             success = true
         } catch (e: RuntimeException) {
-            Log.e("Recorder", "Fatal exception! Destroying media projection failed." + "\n" + e.message)
+            Log.e(
+                "Recorder",
+                "Fatal exception! Destroying media projection failed." + "\n" + e.message
+            )
             success = false
         } finally {
             mediaRecorder!!.reset()

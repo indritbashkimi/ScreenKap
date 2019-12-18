@@ -32,21 +32,27 @@ import com.ibashkimi.screenrecorder.databinding.FragmentAboutBinding
 
 class AboutFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return FragmentAboutBinding.inflate(inflater, container, false).run {
             version.text = getString(R.string.version, BuildConfig.VERSION_NAME)
             sourceCode.setOnClickListener {
-                CustomTabsIntent.Builder().build().launchUrl(requireContext(),
-                        Uri.parse(requireContext().getString(R.string.app_source_code)))
+                CustomTabsIntent.Builder().build().launchUrl(
+                    requireContext(),
+                    Uri.parse(requireContext().getString(R.string.app_source_code))
+                )
             }
             sendFeedback.setOnClickListener {
                 sendFeedback()
             }
             privacyPolicy.setOnClickListener(
-                    Navigation.createNavigateOnClickListener(R.id.action_about_to_privacy_policy)
+                Navigation.createNavigateOnClickListener(R.id.action_about_to_privacy_policy)
             )
             licenses.setOnClickListener(
-                    Navigation.createNavigateOnClickListener(R.id.action_about_to_licenses)
+                Navigation.createNavigateOnClickListener(R.id.action_about_to_licenses)
             )
             root
         }

@@ -30,7 +30,12 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class SAFDataSource(val context: Context, val uri: Uri) : DataSource {
 
-    override fun create(folderUri: Uri, name: String, mimeType: String, extra: ContentValues?): Uri? {
+    override fun create(
+        folderUri: Uri,
+        name: String,
+        mimeType: String,
+        extra: ContentValues?
+    ): Uri? {
         return DocumentFile.fromTreeUri(context, folderUri)?.createFile(mimeType, name)?.uri
     }
 
@@ -56,14 +61,17 @@ class SAFDataSource(val context: Context, val uri: Uri) : DataSource {
                 context.contentResolver.openFileDescriptor(it.uri, "r")?.fileDescriptor?.let { fd ->
                     val retriever = MediaMetadataRetriever()
                     retriever.setDataSource(fd)
-                    val time: String? = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                    val time: String? =
+                        retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
                     retriever.release()
                     time?.toInt()
                 }?.let { duration ->
                     // Duration is null when the file is corrupted or it is recording
                     recordings.add(
-                            Recording(it.uri, it.name
-                                    ?: "", duration, it.length(), it.lastModified())
+                        Recording(
+                            it.uri, it.name
+                                ?: "", duration, it.length(), it.lastModified()
+                        )
                     )
                 }
             }
@@ -90,11 +98,11 @@ class SAFDataSource(val context: Context, val uri: Uri) : DataSource {
 
     private fun registerReceiver(receiver: BroadcastReceiver) {
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver,
-                IntentFilter().apply {
-                    addAction(ACTION_CONTENT_CHANGED)
-                    addAction(RecorderService.ACTION_RECORDING_COMPLETED)
-                    addAction(RecorderService.ACTION_RECORDING_DELETED)
-                })
+            IntentFilter().apply {
+                addAction(ACTION_CONTENT_CHANGED)
+                addAction(RecorderService.ACTION_RECORDING_COMPLETED)
+                addAction(RecorderService.ACTION_RECORDING_DELETED)
+            })
     }
 
     private fun unregisterReceiver(receiver: BroadcastReceiver) {
@@ -102,7 +110,8 @@ class SAFDataSource(val context: Context, val uri: Uri) : DataSource {
     }
 
     private fun notifyObservers() {
-        LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(RecorderService.ACTION_RECORDING_DELETED))
+        LocalBroadcastManager.getInstance(context)
+            .sendBroadcast(Intent(RecorderService.ACTION_RECORDING_DELETED))
     }
 
     companion object {
