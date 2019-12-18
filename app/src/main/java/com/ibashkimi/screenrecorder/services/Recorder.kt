@@ -40,31 +40,43 @@ class Recorder(private val context: Context) {
         if (isRecording) {
             throw IllegalStateException("start called but Recorder is already recording.")
         }
-        mediaRecorder = MediaRecorder()
-        if (!mediaRecorder!!.init(options)) {
+        val newMediaRecorder = MediaRecorder()
+        if (!newMediaRecorder.init(options)) {
             isRecording = false
             return false
         }
+        mediaRecorder = newMediaRecorder
 
         //Set Callback for MediaProjection
         mediaProjectionCallback = MediaProjectionCallback()
-        val projectionManager = context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+        val projectionManager =
+            context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
 
         //Initialize MediaProjection using data received from Intent
-        mediaProjection = projectionManager.getMediaProjection(result, data)
-        mediaProjection!!.registerCallback(mediaProjectionCallback, null)
-
-        virtualDisplay = mediaProjection!!.createVirtualDisplay("ScreenRecorder",
-                options.video.resolution.width, options.video.resolution.height, options.video.virtualDisplayDpi,
+        mediaProjection = projectionManager.getMediaProjection(result, data)?.apply {
+            registerCallback(mediaProjectionCallback, null)
+            virtualDisplay = createVirtualDisplay(
+                "ScreenRecorder",
+                options.video.resolution.width,
+                options.video.resolution.height,
+                options.video.virtualDisplayDpi,
                 DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
-                mediaRecorder!!.surface, null, null)
+                newMediaRecorder.surface,
+                null,
+                null
+            )
+        }
+
         return try {
-            mediaRecorder!!.start()
+            newMediaRecorder.start()
             isRecording = true
             true
         } catch (e: IllegalStateException) {
             isRecording = false
-            mediaProjection!!.stop()
+            mediaProjection?.stop()
+            mediaRecorder = null
+            mediaProjection = null
+            mediaProjectionCallback = null
             false
         }
     }
@@ -78,19 +90,19 @@ class Recorder(private val context: Context) {
             throw IllegalStateException("Called pause but Recorder is not recording.")
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            mediaRecorder!!.pause()
+            mediaRecorder?.pause()
         }
     }
 
     fun resume() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            mediaRecorder!!.resume()
+            mediaRecorder?.resume()
         }
     }
 
     private fun MediaRecorder.init(options: Options): Boolean {
         val fileDescriptor = context.contentResolver
-                .openFileDescriptor(options.output.uri, "w")?.fileDescriptor ?: return false
+            .openFileDescriptor(options.output.uri.uri, "w")?.fileDescriptor ?: return false
 
         try {
             setVideoSource(MediaRecorder.VideoSource.SURFACE)
@@ -126,7 +138,7 @@ class Recorder(private val context: Context) {
         }
         var success: Boolean
         try {
-            mediaRecorder!!.stop()
+            mediaRecorder?.stop()
             Log.i("Recorder", "MediaProjection Stopped")
             success = true
         } catch (e: RuntimeException) {
@@ -136,12 +148,12 @@ class Recorder(private val context: Context) {
             )
             success = false
         } finally {
-            mediaRecorder!!.reset()
-            virtualDisplay!!.release()
-            mediaRecorder!!.release()
-            if (mediaProjection != null) {
-                mediaProjection!!.unregisterCallback(mediaProjectionCallback)
-                mediaProjection!!.stop()
+            mediaRecorder?.reset()
+            virtualDisplay?.release()
+            mediaRecorder?.release()
+            mediaProjection?.let {
+                it.unregisterCallback(mediaProjectionCallback)
+                it.stop()
                 mediaProjection = null
             }
         }
