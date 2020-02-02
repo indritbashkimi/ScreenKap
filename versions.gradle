@@ -22,23 +22,23 @@ def versions = [
                 targetSdk : 29
         ],
         androidx: [
-                appcompat           : '1.2.0-alpha01',
-                browser             : '1.2.0-rc01',
+                appcompat           : '1.1.0',
+                browser             : '1.2.0',
                 cardview            : '1.0.0',
-                core                : '1.2.0-rc01',
+                core                : '1.1.0',
                 documentfile        : '1.0.1',
-                fragment            : '1.2.0-rc03',
-                lifecycle           : '2.2.0-rc03',
-                localbroadcastmanager : '1.1.0-alpha01',
-                navigation          : '2.2.0-rc03',
-                paging              : '2.1.0',
+                fragment            : '1.2.0',
+                lifecycle           : '2.2.0',
+                localbroadcastmanager : '1.0.0',
+                navigation          : '2.2.0',
+                paging              : '2.1.1',
                 preference          : '1.1.0',
-                recyclerview        : '1.1.0-beta04',
-                recyclerviewSelection        : '1.1.0-beta01',
-                swiperefreshlayout  : '1.1.0-alpha03'
+                recyclerview        : '1.1.0',
+                recyclerviewSelection        : '1.0.0',
+                swiperefreshlayout  : '1.0.0'
         ],
         google  : [
-                material: '1.2.0-alpha02'
+                material: '1.1.0-rc02'
         ],
         kotlin  : '1.3.61',
         test    : [
@@ -68,7 +68,7 @@ def libraries = [
                 stdlib    : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$versions.kotlin",
                 test      : "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin",
                 plugin    : "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin",
-                coroutines: 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1'
+                coroutines: 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.3'
         ],
         lifecycle : [
                 common    : "androidx.lifecycle:lifecycle-common-java8:${versions.androidx.lifecycle}",
