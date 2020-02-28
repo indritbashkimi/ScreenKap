@@ -31,7 +31,6 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
@@ -42,6 +41,7 @@ import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.selection.SelectionTracker
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ibashkimi.screenrecorder.MainActivity.Companion.ACTION_TOGGLE_RECORDING
 import com.ibashkimi.screenrecorder.R
@@ -316,7 +316,7 @@ class HomeFragment : RecordingListFragment() {
     }
 
     private fun showChooseTreeUri() {
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.choose_location_dialog_title)
             .setPositiveButton(R.string.choose_location_action) { _, _ ->
                 val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
@@ -349,7 +349,7 @@ class HomeFragment : RecordingListFragment() {
         input.selectAll()
         view.findViewById<TextView>(R.id.extension).text = recording.title.extension
 
-        AlertDialog.Builder(context)
+        MaterialAlertDialogBuilder(context)
             .setTitle(R.string.dialog_title_rename)
             .setPositiveButton(android.R.string.ok) { dialog, _ ->
                 val newName = input.text.toString().trim { it <= ' ' } + recording.title.extension
@@ -359,12 +359,11 @@ class HomeFragment : RecordingListFragment() {
             }
             .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
             .setView(view)
-            .create()
             .show()
     }
 
     private fun showDeleteRecordingDialog(recording: Recording) {
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.dialog_delete_file_msg)
             .setPositiveButton(android.R.string.ok) { dialog, _ ->
                 delete(recording)
@@ -372,12 +371,11 @@ class HomeFragment : RecordingListFragment() {
                 dialog.cancel()
             }
             .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.cancel() }
-            .create()
             .show()
     }
 
     private fun showDeleteRecordingsDialog(recordings: List<Recording>) {
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.dialog_delete_all_msg)
             .setPositiveButton(android.R.string.ok) { dialog, _ ->
                 delete(recordings)
@@ -385,7 +383,6 @@ class HomeFragment : RecordingListFragment() {
                 dialog.cancel()
             }
             .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.cancel() }
-            .create()
             .show()
     }
 

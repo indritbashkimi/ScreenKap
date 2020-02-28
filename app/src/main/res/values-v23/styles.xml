@@ -16,7 +16,8 @@
 
 <resources>
 
-    <style name="AppTheme" parent="BaseTheme.Extra">
+    <style name="BaseTheme.Extended">
+        <item name="android:statusBarColor">@color/design_default_color_background</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>

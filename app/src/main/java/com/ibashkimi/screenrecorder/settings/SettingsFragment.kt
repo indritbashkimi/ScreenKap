@@ -26,9 +26,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.WindowManager
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.preference.*
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ibashkimi.screenrecorder.R
 import com.ibashkimi.screenrecorder.applyNightMode
 import com.ibashkimi.screenrecorder.services.UriType
@@ -67,7 +67,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         if (preference.key == getString(R.string.pref_key_save_location)) {
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Save location")
                 .setMessage("Recordings are saved in ${preferenceHelper.saveLocation?.uri?.toReadableString()}")
                 .setNeutralButton(R.string.reset_save_location) { dialog, _ ->
@@ -86,7 +86,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                     startActivityForResult(intent, REQUEST_DOCUMENT_TREE)
                     dialog.dismiss()
                 }
-                .create().show()
+                .show()
             return true
         }
         return super.onPreferenceTreeClick(preference)
@@ -159,7 +159,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
             ) {
                 recordAudio.isChecked = false
                 if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
-                    AlertDialog.Builder(requireContext())
+                    MaterialAlertDialogBuilder(requireContext())
                         .setMessage(R.string.audio_permission_need)
                         .setPositiveButton(R.string.dialog_ask_again) { _, _ ->
                             requestAudioPermission()
@@ -167,9 +167,9 @@ class SettingsFragment : PreferenceFragmentCompat(),
                         .setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
                             dialogInterface.dismiss()
                         }
-                        .create().show()
+                        .show()
                 } else {
-                    AlertDialog.Builder(requireContext())
+                    MaterialAlertDialogBuilder(requireContext())
                         .setMessage(R.string.audio_permission_need)
                         .setPositiveButton(R.string.dialog_open_app_settings) { _, _ ->
                             startActivity(
@@ -182,7 +182,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                         .setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
                             dialogInterface.dismiss()
                         }
-                        .create().show()
+                        .show()
                 }
             }
         }

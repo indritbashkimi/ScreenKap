@@ -18,17 +18,14 @@
 <resources>
 
     <style name="BaseTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:statusBarColor">?android:windowBackground</item>
         <item name="toolbarStyle">@style/ToolbarStyle</item>
     </style>
 
-    <style name="BaseTheme.Extra">
-        <item name="alertDialogTheme">@style/Theme.MaterialComponents.Light.Dialog.Alert</item>
-    </style>
-
-    <style name="AppTheme" parent="BaseTheme.Extra">
+    <style name="BaseTheme.Extended">
         <item name="android:statusBarColor">#E0E0E0</item>
     </style>
+
+    <style name="AppTheme" parent="BaseTheme.Extended" />
 
     <style name="ToolbarStyle" parent="Widget.MaterialComponents.Toolbar">
         <item name="android:background">?android:windowBackground</item>
