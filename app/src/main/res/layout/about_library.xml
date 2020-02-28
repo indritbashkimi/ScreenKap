@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical|start"
-        android:textAppearance="?textAppearanceBody1"
+        android:textAppearance="?textAppearanceSubtitle1"
         tools:text="Android Support Library" />
 
     <TextView
@@ -42,6 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start"
+        android:textAppearance="?textAppearanceCaption"
         tools:text="www.google.com" />
 
     <TextView
@@ -49,7 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start"
-        android:textAppearance="?textAppearanceBody2"
+        android:textAppearance="?textAppearanceSubtitle2"
         tools:text="@string/apache_v2" />
 
 </LinearLayout>

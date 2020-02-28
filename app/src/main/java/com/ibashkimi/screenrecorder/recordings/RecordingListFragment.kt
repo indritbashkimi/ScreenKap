@@ -27,7 +27,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ibashkimi.screenrecorder.R
@@ -59,8 +58,6 @@ abstract class RecordingListFragment : Fragment() {
             layoutManager = linearLayoutManager
             recordingsAdapter = RecordingAdapter()
             adapter = recordingsAdapter
-            val divider = DividerItemDecoration(requireContext(), linearLayoutManager.orientation)
-            addItemDecoration(divider)
             selectionTracker = SelectionTracker.Builder(
                 "recording-selection-id",
                 this,

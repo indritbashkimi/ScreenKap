@@ -26,7 +26,7 @@
         android:theme="?attr/appBarStyle"
         app:liftOnScroll="true">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             style="?attr/toolbarStyle"
             android:layout_width="match_parent"

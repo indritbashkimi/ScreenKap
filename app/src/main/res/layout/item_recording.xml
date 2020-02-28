@@ -22,25 +22,27 @@
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:minHeight="?listPreferredItemHeight">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:gravity="start|center_vertical"
         android:orientation="horizontal">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/thumbnail"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_margin="16dp"
             android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/ImageViewRoundedCornersOverlay" />
+            app:shapeAppearanceOverlay="?shapeAppearanceSmallComponent" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="16dp"
             android:layout_marginEnd="16dp"
             android:gravity="center_vertical"
             android:orientation="vertical">
@@ -49,10 +51,9 @@
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
                 android:contentDescription="@string/recording_thumbnail_description"
                 android:gravity="start"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textAppearance="?textAppearanceSubtitle1"
                 tools:text="00:32" />
 
             <LinearLayout
@@ -66,6 +67,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
+                    android:textAppearance="?textAppearanceCaption"
                     tools:text="00:00:03" />
 
                 <TextView
@@ -73,15 +75,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
+                    android:textAppearance="?textAppearanceCaption"
                     tools:text="104 kb" />
 
                 <TextView
                     android:id="@+id/modified"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    android:layout_weight="1"
-                    android:gravity="end"
+                    android:textAppearance="?textAppearanceCaption"
                     tools:text="1 hour ago" />
 
             </LinearLayout>
