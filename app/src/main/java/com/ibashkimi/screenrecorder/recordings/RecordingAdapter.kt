@@ -84,7 +84,6 @@ class RecordingViewHolder(private val binding: ItemRecordingBinding) :
         RecordingDetails(pos, recording!!)
 
     private fun ImageView.load(uri: Uri) {
-        clipToOutline = true
         Glide.with(this)
             .asBitmap()
             .centerCrop()
