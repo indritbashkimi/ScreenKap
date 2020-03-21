@@ -280,7 +280,7 @@ class PreferenceHelper(
 
     var audioEncoder: Int
         get() {
-            return when (getString(R.string.pref_key_audio_encoder) ?: "default") {
+            return when (getString(R.string.pref_key_audio_encoder) ?: "aac") {
                 "default" -> MediaRecorder.AudioEncoder.DEFAULT
                 "aac" -> MediaRecorder.AudioEncoder.AAC
                 "opus" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
