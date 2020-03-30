@@ -79,6 +79,6 @@ dependencies {
     implementation deps.navigation.fragment
     implementation deps.navigation.ui
 
-    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
     kapt 'com.github.bumptech.glide:compiler:4.10.0'
 }
