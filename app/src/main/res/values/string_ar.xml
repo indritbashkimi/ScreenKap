@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Generic -->
+    <string name="about"> حول </string>
+    <string name="settings"> الإعدادات </string>
+    <string name="share"> مشاركة </string>
+    <string name="privacy_policy_title"> سياسة الخصوصية </string>
+
+    <!-- Home -->
+    <string name="home_recordings_title"> التسجيلات </string>
+    <string name="home_more_settings"> المزيد من الإعدادات </string>
+    <string name="home_no_recordings_message"> لا تسجيلات </string>
+    <string name="home_fab_record_hint"> ابدأ التسجيل </string>
+    <string name="action_sort_by_name"> الاسم </string>
+    <string name="action_sort_by_date"> التاريخ </string>
+    <string name="action_sort_by_size"> الحجم </string>
+    <string name="action_sort_by"> التصنيف حسب </string>
+    <string name="action_order_by"> اطلب </string>
+    <string name="action_ascending"> تصاعدي </string>
+    <string name="action_descending"> تنازليًا </string>
+    <string name="menu_share">@string/share</string>
+    <string name="menu_delete"> حذف </string>
+    <string name="dialog_delete_file_msg"> هل تريد حذف هذا الملف؟ </string>
+    <string name="dialog_delete_all_msg"> هل تريد حذف جميع التسجيلات المحددة؟ </string>
+    <string name="dialog_title_rename"> إدراج اسم جديد </string>
+    <string name="new_file_name_hint"> اسم جديد </string>
+    <string name="recording_thumbnail_description"> الصورة المصغرة </string>
+    <string name="choose_location_dialog_title"> اختر مكان حفظ التسجيلات </string>
+    <string name="choose_location_action"> حدد الدليل </string>
+
+    <!-- Service -->
+    <string name="notification_title"> تسجيل الشاشة </string>
+    <string name="notification_summary_recording"> التسجيل </string>
+    <string name="notification_action_stop"> توقف </string>
+    <string name="notification_action_pause"> إيقاف مؤقت </string>
+    <string name="notification_action_resume"> استئناف </string>
+    <string name="notification_action_delete"> حذف </string>
+    <string name="notification_channel_recording"> أثناء التسجيل </string>
+    <string name="notification_channel_finish"> انتهى التسجيل </string>
+    <string name="notification_finish_title"> تم حفظ الفيديو </string>
+    <string name="notification_finish_summary"> افتح مقاطع الفيديو المسجلة </string>
+    <string name="recording_error_message"> خطأ في التسجيل </string>
+    <string name="recording_paused_message"> تم إيقاف التسجيل مؤقتًا </string>
+
+    <!-- Settings -->
+    <string name="pref_category_appearance"> المظهر </string>
+    <string name="pref_dark_theme_title"> مظهر داكن </string>
+    <string name="pref_key_save_location"> save_location </string>
+    <string name="pref_key_save_location_type"> save_location_type </string>
+    <string name="pref_save_location_title"> المجلد </string>
+    <string name="reset_save_location"> إعادة تعيين </string>
+    <string name="change_save_location"> التغيير </string>
+
+    <string name="pref_category_video"> فيديو </string>
+    <string name="pref_video_resolution_title"> الدقة </string>
+    <string name="pref_video_fps_title"> إطارات في الثانية </string>
+    <string name="pref_video_bitrate_title"> معدل البت </string>
+    <string name="pref_video_encoder"> التشفير </string>
+
+    <string name="pref_category_audio"> صوت </string>
+    <string name="pref_audio_record_title"> تسجيل الصوت </string>
+    <string name="pref_audio_record_summary"> تسجيل الصوت من الميكروفون مع فيديو الشاشة </string>
+    <string name="pref_audio_sampling_rate"> معدل أخذ العينات </string>
+    <string name="pref_audio_bitrate"> معدل البت </string>
+
+    <string name="prefs_category_output"> الإخراج </string>
+    <string name="pref_filename_format_title"> التنسيق </string>
+    <string name="pref_filename_prefix_title"> بادئة </string>
+
+    <string name="audio_permission_need"> مطلوب إذن لتسجيل الصوت </string>
+    <string name="dialog_ask_again"> اسأل مرة أخرى </string>
+    <string name="dialog_open_app_settings"> فتح الإعدادات </string>
+
+    <!-- About -->
+
+    <string name="about_title">@string/about</string>
+    <string name="feedback_subject"> تعليقات Screen Kap </string>
+    <string name="feedback_chooser_title"> إرسال بريد إلكتروني ... </string>
+    <string name="version">الإصدار %s</string>
+    <string name="about_header_help"> المساعدة </string>
+    <string name="about_send_feedback"> إرسال تعليقات </string>
+    <string name="about_header_legal"> قانوني </string>
+    <string name="licences_title"> التراخيص </string>
+    <string name="about_lib_intro"> يستخدم هذا التطبيق مكتبات مفتوحة المصدر التالية. </string>
+    <string name="about_privacy_policy"> سياسة الخصوصية </string>
+    <string name="app_description"> هذا التطبيق مفتوح المصدر ومرخص بموجب Apache 2.0. </string>
+    <string name="source_code"> <u> شفرة المصدر </u> </string>
+    <string name="open_privacy_policy_website"> فتح موقع الويب </string>
+
+    <string name="shortcut_short_label"> تبديل </string>
+    <string name="shortcut_long_label"> تبديل التسجيل </string>
+    <string name="shortcut_disabled_message"> تم تعطيل التبديل </string>
+</resources>
