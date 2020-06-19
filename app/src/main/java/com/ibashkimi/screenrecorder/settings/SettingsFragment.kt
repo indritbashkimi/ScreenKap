@@ -23,6 +23,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.WindowManager
@@ -45,7 +46,12 @@ class SettingsFragment : PreferenceFragmentCompat(),
         get() {
             val metrics = DisplayMetrics()
             val window = requireActivity().getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            window.defaultDisplay.getRealMetrics(metrics)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                requireContext().display!!
+            } else {
+                @Suppress("DEPRECATION")
+                window.defaultDisplay
+            }.getRealMetrics(metrics)
             return metrics
         }
 

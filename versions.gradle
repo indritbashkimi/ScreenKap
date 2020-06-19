@@ -16,10 +16,10 @@
 
 def versions = [
         android : [
-                compileSdk: 29,
-                buildTools: '29.0.3',
+                compileSdk: 30,
+                buildTools: '30.0.0',
                 minSdk    : 21,
-                targetSdk : 29
+                targetSdk : 30
         ],
         androidx: [
                 appcompat           : '1.1.0',
