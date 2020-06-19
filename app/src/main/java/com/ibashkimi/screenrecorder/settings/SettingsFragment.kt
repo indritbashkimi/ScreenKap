@@ -74,8 +74,13 @@ class SettingsFragment : PreferenceFragmentCompat(),
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         if (preference.key == getString(R.string.pref_key_save_location)) {
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Save location")
-                .setMessage("Recordings are saved in ${preferenceHelper.saveLocation?.uri?.toReadableString()}")
+                .setTitle(R.string.pref_save_location_dialog_title)
+                .setMessage(
+                    getString(
+                        R.string.pref_save_location_dialog_message,
+                        preferenceHelper.saveLocation?.uri?.toReadableString()
+                    )
+                )
                 .setNeutralButton(R.string.reset_save_location) { dialog, _ ->
                     preferenceHelper.resetSaveLocation()
                     dialog.dismiss()
