@@ -37,7 +37,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 
 
-@UseExperimental(ExperimentalCoroutinesApi::class)
+@ExperimentalCoroutinesApi
 class RecordingsViewModel(app: Application) : AndroidViewModel(app) {
 
     private val context: Context = getApplication()
