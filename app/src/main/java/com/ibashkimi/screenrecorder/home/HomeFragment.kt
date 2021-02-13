@@ -259,14 +259,14 @@ class HomeFragment : RecordingListFragment() {
 
     private fun bottomBarOnReset() {
         configureFab(isRecording)
-        bottomBar.navigationIcon = requireContext().getDrawable(R.drawable.ic_menu)
+        bottomBar.navigationIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_menu)
         bottomBar.replaceMenu(R.menu.home)
         bottomBar.fabAlignmentMode = BottomAppBar.FAB_ALIGNMENT_MODE_CENTER
     }
 
     private fun bottomBarOnItemSelected() {
         bottomBar.fabAlignmentMode = BottomAppBar.FAB_ALIGNMENT_MODE_END
-        bottomBar.navigationIcon = requireContext().getDrawable(R.drawable.ic_cancel)
+        bottomBar.navigationIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_cancel)
         bottomBar.replaceMenu(R.menu.item_selected)
     }
 
@@ -419,7 +419,7 @@ class HomeFragment : RecordingListFragment() {
     }
 
     private fun FloatingActionButton.setImageDrawable(res: Int) {
-        this.setImageDrawable(requireContext().getDrawable(res))
+        this.setImageDrawable(ContextCompat.getDrawable(requireContext(), res))
     }
 
     companion object {
