@@ -3,7 +3,6 @@ local.properties
 
 # Gradle generated files
 .gradle/
-.idea/gradle.xml
 build
 app/release
 
@@ -11,25 +10,7 @@ app/release
 .signing/
 
 # User-specific configurations
-.idea/assetWizardSettings.xml
-.idea/caches
-.idea/icon.png
-.idea/codeStyles
-.idea/copyright
-.idea/libraries/
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/.name
-.idea/compiler.xml
-.idea/copyright/profiles_settings.xml
-.idea/encodings.xml
-.idea/gradle_extensions.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/navEditor.xml
-.idea/scopes/scope_settings.xml
-.idea/runConfigurations.xml
-.idea/vcs.xml
+.idea/
 *.iml
 
 # OS-specific files
@@ -41,6 +22,3 @@ app/release
 ehthumbs.db
 Thumbs.db
 .directory
-
-# Keystore files
-/screenshots/.directory
