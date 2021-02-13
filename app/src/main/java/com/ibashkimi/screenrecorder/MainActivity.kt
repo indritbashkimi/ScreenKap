@@ -31,13 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
-            PreferenceHelper(this).apply {
-                // Apply theme before onCreate
-                applyNightMode(nightMode)
-                initIfFirstTimeAnd {
-                    createNotificationChannels()
-                }
-            }
+            onFirstCreate()
         }
 
         super.onCreate(savedInstanceState)
@@ -52,6 +46,19 @@ class MainActivity : AppCompatActivity() {
                 setOf(R.id.home, R.id.navigation_dialog, R.id.more_settings_dialog)
             )
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
+        }
+    }
+
+    /**
+     * Called the first time the activity is created.
+     */
+    private fun onFirstCreate() {
+        PreferenceHelper(this).apply {
+            // Apply theme before onCreate
+            applyNightMode(nightMode)
+            initIfFirstTimeAnd {
+                createNotificationChannels()
+            }
         }
     }
 

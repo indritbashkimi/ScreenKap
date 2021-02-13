@@ -23,6 +23,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
+import androidx.annotation.RequiresApi
 
 const val RECORDING_NOTIFICATION_CHANNEL_ID = "channel_recording"
 const val FINISH_NOTIFICATION_CHANNEL_ID = "channel_finished"
@@ -32,30 +33,36 @@ fun Context.createNotificationChannels() {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
         return
     }
-    val notificationChannels = ArrayList<NotificationChannel>()
-    val recordingChannel = NotificationChannel(
-        RECORDING_NOTIFICATION_CHANNEL_ID,
-        getString(R.string.notification_channel_recording),
-        NotificationManager.IMPORTANCE_HIGH
-    )
-    recordingChannel.enableLights(true)
-    recordingChannel.lightColor = Color.RED
-    recordingChannel.setShowBadge(false)
-    recordingChannel.enableVibration(false)
-    recordingChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-    notificationChannels.add(recordingChannel)
-
-    val finishChannel = NotificationChannel(
-        FINISH_NOTIFICATION_CHANNEL_ID,
-        getString(R.string.notification_channel_finish),
-        NotificationManager.IMPORTANCE_DEFAULT
-    )
-    //finishChannel.enableLights(true)
-    finishChannel.setShowBadge(true)
-    finishChannel.enableVibration(false)
-    finishChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-    notificationChannels.add(finishChannel)
-
     (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
-        .createNotificationChannels(notificationChannels)
+        .createNotificationChannels(
+            listOf(
+                channelRecording(),
+                channelFinish()
+            )
+        )
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun Context.channelRecording() = NotificationChannel(
+    RECORDING_NOTIFICATION_CHANNEL_ID,
+    getString(R.string.notification_channel_recording),
+    NotificationManager.IMPORTANCE_HIGH
+).apply {
+    enableLights(true)
+    lightColor = Color.RED
+    setShowBadge(false)
+    enableVibration(false)
+    lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun Context.channelFinish() = NotificationChannel(
+    FINISH_NOTIFICATION_CHANNEL_ID,
+    getString(R.string.notification_channel_finish),
+    NotificationManager.IMPORTANCE_DEFAULT
+).apply {
+    //enableLights(true)
+    setShowBadge(true)
+    enableVibration(false)
+    lockscreenVisibility = Notification.VISIBILITY_PUBLIC
 }

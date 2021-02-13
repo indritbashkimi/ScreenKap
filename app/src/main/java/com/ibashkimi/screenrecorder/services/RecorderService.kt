@@ -54,110 +54,116 @@ class RecorderService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        when (intent.action) {
-            ACTION_RECORDING_START ->
-                return when (session?.state) {
-                    RecorderState.State.RECORDING -> START_STICKY
-                    RecorderState.State.PAUSED -> {
-                        resume(this)
-                        START_STICKY
-                    }
-                    RecorderState.State.STOPPED, null -> {
-                        startForeground(
-                            NOTIFICATION_ID_RECORDING,
-                            createOnRecordingNotification().build()
-                        )
-                        return (createNewRecordingSession()?.let {
-                            if (it.start(intent)) {
-                                session = it
-                                START_STICKY
-                            } else {
-                                START_NOT_STICKY
-                            }
-                        } ?: START_NOT_STICKY).also {
-                            if (it == START_NOT_STICKY) stopForeground(true)
-                        }
-                    }
-                }
-            ACTION_RECORDING_PAUSE -> {
-                return session?.let {
-                    when (it.state) {
-                        RecorderState.State.RECORDING -> {
-                            it.pause()
-                            updateNotification(
-                                createOnPausedNotification().setUsesChronometer(false).build(),
-                                NOTIFICATION_ID_RECORDING
-                            )
-                            Toast.makeText(
-                                this,
-                                R.string.recording_paused_message,
-                                Toast.LENGTH_SHORT
-                            )
-                                .show()
-                            START_STICKY
-                        }
-                        RecorderState.State.PAUSED -> return START_STICKY
-                        RecorderState.State.STOPPED -> START_NOT_STICKY
-                    }
-                    START_STICKY
-                } ?: START_NOT_STICKY
-            }
-            ACTION_RECORDING_RESUME -> {
-                return session?.let {
-                    when (it.state) {
-                        RecorderState.State.PAUSED -> {
-                            it.resume()
-                            updateNotification(
-                                createOnRecordingNotification().setUsesChronometer(true)
-                                    .setWhen(System.currentTimeMillis() - it.elapsedTime).build(),
-                                NOTIFICATION_ID_RECORDING
-                            )
-                            START_STICKY
-                        }
-                        RecorderState.State.RECORDING -> START_STICKY
-                        RecorderState.State.STOPPED -> START_NOT_STICKY
-                    }
-                } ?: START_NOT_STICKY
-            }
-            ACTION_RECORDING_STOP -> {
-                session?.let {
-                    when (it.state) {
-                        RecorderState.State.RECORDING, RecorderState.State.PAUSED -> {
-                            if (it.stop()) {
-                                Log.d(TAG, "Recording finished.")
-                                onRecordingCompleted()
-                                showFinishNotification(it.options.output.uri)
-                                session = null
-                            } else {
-                                //delete(options.output.uri)
-                                Toast.makeText(
-                                    this,
-                                    getString(R.string.recording_error_message),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-                        RecorderState.State.STOPPED -> {
-                        }
-                    }
-                }
-
-                stopForeground(true)
-                stopSelf()
-                return START_NOT_STICKY
-
-            }
-            ACTION_RECORDING_DELETE -> {
-                intent.getParcelableExtra<SaveUri>(EXTRA_RECORDING_DELETE_URI)?.also {
-                    createNewDataManager(it).delete(it.uri)
-                    onRecordingDeleted()
-                }
-                notificationManager.cancel(NOTIFICATION_ID_FINISH)
-                return if (session?.state == RecorderState.State.STOPPED) START_NOT_STICKY else START_STICKY
-            }
-            else -> return START_NOT_STICKY
+        return when (intent.action) {
+            ACTION_RECORDING_START -> onActionRecordingStart(intent)
+            ACTION_RECORDING_PAUSE -> onActionRecordingPause()
+            ACTION_RECORDING_RESUME -> onActionRecordingResume()
+            ACTION_RECORDING_STOP -> onActionRecordingStop()
+            ACTION_RECORDING_DELETE -> onActionRecordingDelete(intent)
+            else -> START_NOT_STICKY
         }
     }
+
+    private fun onActionRecordingStart(intent: Intent): Int {
+        return when (session?.state) {
+            RecorderState.State.RECORDING -> START_STICKY
+            RecorderState.State.PAUSED -> {
+                resume(this)
+                START_STICKY
+            }
+            RecorderState.State.STOPPED, null -> {
+                startForeground(
+                    NOTIFICATION_ID_RECORDING,
+                    createOnRecordingNotification().build()
+                )
+                return (createNewRecordingSession()?.let {
+                    if (it.start(intent)) {
+                        session = it
+                        START_STICKY
+                    } else {
+                        START_NOT_STICKY
+                    }
+                } ?: START_NOT_STICKY).also {
+                    if (it == START_NOT_STICKY) stopForeground(true)
+                }
+            }
+        }
+    }
+
+    private fun onActionRecordingPause(): Int = session?.let {
+        when (it.state) {
+            RecorderState.State.RECORDING -> {
+                it.pause()
+                updateNotification(
+                    createOnPausedNotification().setUsesChronometer(false).build(),
+                    NOTIFICATION_ID_RECORDING
+                )
+                Toast.makeText(
+                    this,
+                    R.string.recording_paused_message,
+                    Toast.LENGTH_SHORT
+                ).show()
+                START_STICKY
+            }
+            RecorderState.State.PAUSED -> return START_STICKY
+            RecorderState.State.STOPPED -> START_NOT_STICKY
+        }
+        START_STICKY
+    } ?: START_NOT_STICKY
+
+    private fun onActionRecordingResume(): Int = session?.let {
+        when (it.state) {
+            RecorderState.State.PAUSED -> {
+                it.resume()
+                updateNotification(
+                    createOnRecordingNotification().setUsesChronometer(true)
+                        .setWhen(System.currentTimeMillis() - it.elapsedTime).build(),
+                    NOTIFICATION_ID_RECORDING
+                )
+                START_STICKY
+            }
+            RecorderState.State.RECORDING -> START_STICKY
+            RecorderState.State.STOPPED -> START_NOT_STICKY
+        }
+    } ?: START_NOT_STICKY
+
+    private fun onActionRecordingStop(): Int {
+        session?.let {
+            when (it.state) {
+                RecorderState.State.RECORDING, RecorderState.State.PAUSED -> {
+                    if (it.stop()) {
+                        Log.d(TAG, "Recording finished.")
+                        onRecordingCompleted()
+                        showFinishNotification(it.options.output.uri)
+                        session = null
+                    } else {
+                        //delete(options.output.uri)
+                        Toast.makeText(
+                            this,
+                            getString(R.string.recording_error_message),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                RecorderState.State.STOPPED -> {
+                }
+            }
+        }
+
+        stopForeground(true)
+        stopSelf()
+        return START_NOT_STICKY
+    }
+
+    private fun onActionRecordingDelete(intent: Intent): Int {
+        intent.getParcelableExtra<SaveUri>(EXTRA_RECORDING_DELETE_URI)?.also {
+            createNewDataManager(it).delete(it.uri)
+            onRecordingDeleted()
+        }
+        notificationManager.cancel(NOTIFICATION_ID_FINISH)
+        return if (session?.state == RecorderState.State.STOPPED) START_NOT_STICKY else START_STICKY
+    }
+
 
     private fun createNewDataManager(saveUri: SaveUri): DataManager {
         return DataManager(
