@@ -34,7 +34,6 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -205,7 +204,7 @@ class HomeFragment : RecordingListFragment() {
             }
         })
 
-        recorderState.observe(viewLifecycleOwner, Observer {
+        recorderState.observe(viewLifecycleOwner, {
             when (it) {
                 RecorderState.State.RECORDING -> {
                     onRecording()

@@ -31,7 +31,7 @@ class BottomNavigationDialog : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return FragmentBottomNavDrawerBinding.inflate(inflater, container, false).run {
             navigationView.setNavigationItemSelectedListener {
                 dismiss()

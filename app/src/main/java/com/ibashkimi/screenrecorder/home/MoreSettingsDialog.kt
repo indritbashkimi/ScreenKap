@@ -30,7 +30,7 @@ class MoreSettingsDialog : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return FragmentMoreSettingsBinding.inflate(inflater, container, false).run {
             val prefs = PreferenceHelper(requireContext())
             navigationView.menu.findItem(

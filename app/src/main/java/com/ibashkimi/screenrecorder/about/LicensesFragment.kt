@@ -64,7 +64,7 @@ class LicensesFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return FragmentLicensesBinding.inflate(inflater, container, false).run {
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = LibraryAdapter(libraries)

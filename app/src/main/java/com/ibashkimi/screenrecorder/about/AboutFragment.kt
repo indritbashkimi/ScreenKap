@@ -36,7 +36,7 @@ class AboutFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return FragmentAboutBinding.inflate(inflater, container, false).run {
             version.text = getString(R.string.version, BuildConfig.VERSION_NAME)
             sourceCode.setOnClickListener {

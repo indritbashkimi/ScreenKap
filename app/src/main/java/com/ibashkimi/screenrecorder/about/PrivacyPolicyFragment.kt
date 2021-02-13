@@ -35,7 +35,7 @@ class PrivacyPolicyFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return FragmentPrivacyPolicyBinding.inflate(inflater, container, false).run {
             wvPrivacyPolicy.loadUrl("file:///android_asset/privacy_policy.html")
             root
