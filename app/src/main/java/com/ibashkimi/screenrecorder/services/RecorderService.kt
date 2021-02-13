@@ -266,7 +266,7 @@ class RecorderService : Service() {
             .setOngoing(true)
             .setColor(Color.RED)
             .setContentIntent(openAppPendingIntent)
-            .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
+            .setPriority(NotificationManagerCompat.IMPORTANCE_LOW)
             .apply {
                 actions.forEach { addAction(it) }
             }

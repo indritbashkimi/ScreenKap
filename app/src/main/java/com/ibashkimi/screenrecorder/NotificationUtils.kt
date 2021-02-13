@@ -46,7 +46,7 @@ fun Context.createNotificationChannels() {
 private fun Context.channelRecording() = NotificationChannel(
     RECORDING_NOTIFICATION_CHANNEL_ID,
     getString(R.string.notification_channel_recording),
-    NotificationManager.IMPORTANCE_HIGH
+    NotificationManager.IMPORTANCE_LOW
 ).apply {
     enableLights(true)
     lightColor = Color.RED
